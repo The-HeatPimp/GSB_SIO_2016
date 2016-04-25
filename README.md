@@ -18,15 +18,11 @@ Procédure d'installation de L'API server node.js.
  Si le fichier "Package.json" est à jour un simple npm install suffit :
 
 ```
-#!python
-
 npm install
 ```
 Sinon il faudra installer chacun des modules manquants séparements avec le suffixe **\-\-save** si vous voulez l'inclure par default dans package.json :
 
 ```
-#!python
-
 npm install nom_du_module --save
 ```
 
@@ -35,15 +31,11 @@ npm install nom_du_module --save
 
 Lancer une console de commande depuis le répertoire */bin* dans le dossier d'installation puis lancer mongod:
 ```
-#!python
-
 mongod
 ```
 Lancer une console de commande depuis la racine répertoire contenant le serveur puis ecrire:
 
 ```
-#!python
-
 node server.js
 ```
 
