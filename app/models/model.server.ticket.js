@@ -68,6 +68,7 @@ TicketSchema.post('save',
       typeRequest: this.typeRequest,
       priority: this.priority,
       created_at: this.created_at,
+      message: this.message
     });
   });
 

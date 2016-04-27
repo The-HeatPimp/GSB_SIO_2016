@@ -1,0 +1,18 @@
+.test 
+{
+font-size: 50px;
+}
+
+.description_index{
+	font-family: "Open Sans";
+	margin-top: 10%;
+}
+
+.nom_user{
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.deco{
+	cursor: pointer;
+}

@@ -21,7 +21,7 @@
 						} else {
 							socket.emit('addVehicle', {
 								"success": true,
-								"user": vehicle
+								"vehicle": vehicle
 							});
 						}
 					});
@@ -256,7 +256,7 @@
 								else {
 									socket.emit('createRoute', {
 										"success": true,
-										"error": route
+										"route": route
 									});
 									vehicle.save(function(err) {
 										if (err)
@@ -283,7 +283,7 @@
 				$and: [{
 					_id: data.id
 				}, {
-					"driver": data.driver
+					"driver": socket.decoded_token
 				}]
 			}, function(err, route) {
 				if (err)
@@ -487,8 +487,7 @@
 								});
 							else {
 								socket.emit('leaveRoute', {
-									"success": true,
-									"route": route
+									"success": true
 								});
 							}
 						});

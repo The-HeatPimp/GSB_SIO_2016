@@ -15,3 +15,12 @@ exports.renderLogin = function(req, res, next) {
     }
 };
 
+exports.renderTest = function(req, res, next) {
+    if (!req.user) {
+        res.render('authentication/test', {
+            title: 'Log-in Form',
+        });
+    } else {
+        return res.redirect('/');
+    }
+};

@@ -222,9 +222,7 @@ module.exports = function(socket) {
 						});
 					} else {
 						socket.emit('answerToTicket', {
-							"success": true,
-							"comment": ticket.message,
-							"ticketId" : data.id
+							"success": true
 						});
 					}
 				});

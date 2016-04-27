@@ -12,6 +12,7 @@ var config = require('./config'),
     bodyParser = require('body-parser'),
     fs = require('fs'),
     morgan = require('morgan');
+    
 
 
 
@@ -23,6 +24,7 @@ module.exports = function() {
     app.set('superSecret', env.jwtKey); // secret variable
 
     // Parsing methods
+    
     app.use(bodyParser.urlencoded({
         extended: false
     }));
@@ -100,6 +102,7 @@ module.exports = function() {
                     res.json({
                         success: true,
                         expires: 3600,
+                        accessLevel: user.accessLevel,
                         token: token
                     });
                 }
@@ -115,7 +118,7 @@ module.exports = function() {
     apiRoutes.use(function(req, res, next) {
 
         // check header or url parameters or post parameters for token
-        var token = req.body.token || req.params.token || req.headers['x-access-token'];
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
         // decode token
         if (token) {
@@ -156,6 +159,7 @@ module.exports = function() {
         call the routers
      */
     require('../app/routes/index.server.routes.js')(app);
+    require('../app/routes/api.server.routes.js')(apiRoutes);
 
     return app;
 };

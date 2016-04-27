@@ -2,16 +2,14 @@
 // INDEX ROUTES // 			ACCESSIBLE WITHOUT WEBTOKENS
 //////////////////
 
-module.exports = function(app) {
-	var index = require('../controllers/index.server.controller');
+module.exports = function(apiRoutes) {
+	var api = require('../controllers/api.server.controller');
 
 
 	/*
 		Redirect the user to the login page (! To be improved -> redirection if there'is no valid token in the request)
 	 */
-	app.route('/')
-		.get(index.renderLogin);
 
-	app.route('/test')
-		.get(index.renderTest);
+	apiRoutes.route('/home')
+		.get(api.renderHome);
 };

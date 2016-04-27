@@ -1,4 +1,3 @@
-
 var User = require('mongoose').model('User');
 
 module.exports = function(server) {
@@ -21,7 +20,7 @@ module.exports = function(server) {
 
 	myEvent.on('pushTicket', function(data) {
 		io.sockets.emit('pushTicket', data);
-		
+
 	});
 
 
@@ -42,7 +41,7 @@ module.exports = function(server) {
 		User.find({
 			username: socket.decoded_token
 		}, function(err, user) {
-			console.log(user[0]);
+
 			if (err) {
 				console.log("erreur Admission Admin : " + err);
 			} else if (!user[0])
@@ -53,7 +52,7 @@ module.exports = function(server) {
 					id: socket.id,
 					accessLevel: user[0].accessLevel
 				});
-				console.log(connectedUsers);
+
 			}
 			listUserConnected();
 		});
