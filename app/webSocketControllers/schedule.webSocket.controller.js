@@ -350,10 +350,7 @@
 							"error": "no event found in database"
 						});
 					else {
-
-
 						sentEvent = [];
-
 						for (var i = 0; i < event.length; i++) {
 							sentEvent.push({
 								title: event[i].title,
@@ -362,8 +359,6 @@
 								_id: event[i]._id,
 								location: event[i].location
 							});
-
-
 						}
 						socket.emit('listEvent', {
 							"success": true,
@@ -371,6 +366,53 @@
 						});
 					}
 				});
+		});
+
+		socket.on('requestNextEvent', function(data) {
+			data = JSON.parse(data);
+			var currentDate = new Date();
+			Schedule.find({
+				$and: [{
+					$or: [{
+						"creator": socket.decoded_token
+					}, {
+						"participant.username": socket.decoded_token
+					}]
+				}, {
+					"date_end": {
+						$gt: currentDate
+					}
+				}]
+			}).sort({
+				date_start: -1
+			}).exec(function(err, event) {
+				if (err)
+					socket.emit('requestNextEvent', {
+						"success": false,
+						"error": err
+					});
+				else if (!event)
+					socket.emit('requestNextEvent', {
+						"success": false,
+						"error": "no event found in database"
+					});
+				else {
+					sentEvent = [];
+					for (var i = 0; i < data.nb; i++) {
+						if (!event[i])
+							break;
+						sentEvent.push({
+							title: event[i].title,
+							date_start: event[i].date_start,
+							location: event[i].location
+						});
+					}
+					socket.emit('requestNextEvent', {
+						"success": true,
+						"event": sentEvent
+					});
+				}
+			});
 
 		});
 

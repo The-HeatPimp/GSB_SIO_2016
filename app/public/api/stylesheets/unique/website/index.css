@@ -102,3 +102,30 @@
 	font-size: 15px;
 	margin-left: 5px;
 }
+
+.limit-col {
+	height: 132px;
+}
+
+.thumbnail {
+	height: 132px;
+	overflow: hidden;
+	text-align: left;
+	box-shadow: inset -10px 0px 0px 0px #212121;
+}
+.thumbnail * {
+	margin-left: 20px;
+	line-height: 20px;
+}
+
+.thumbnail h2 {
+	font-size: 20px;
+}
+
+.thumbnail .dateEvent {
+	font-size: 10px;
+}
+
+.thumbnail .locationEvent {
+	font-size: 15px;
+}
