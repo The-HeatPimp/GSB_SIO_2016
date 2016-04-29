@@ -28,5 +28,5 @@ ChatSchema.post('save',
 			receiver: this.receiver
 		});
 	});
-
+console.log('load model chat');
 mongoose.model('Chat', ChatSchema);

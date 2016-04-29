@@ -30,6 +30,7 @@
 		function homerequest(response) {
 
 			if (response.success === true) {
+				connect.store.userInfo(response);
 				window.location.href = "api/home?token=" + response.token;
 			} else {
 				console.log(response.message);

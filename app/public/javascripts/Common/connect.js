@@ -9,11 +9,8 @@ var infoUser = {
 
 connect.retrieve = {
 	info: function() {
-			return infoConnection;
-	},
-	userInfo: function() {
 		if (infoUser.username !== "")
-			return infoUser;
+			return infoConnection;
 		else {
 			var temp = cookies.usage.getCookies("auth-info");
 			infoUser = {
@@ -23,6 +20,12 @@ connect.retrieve = {
 			return infoUser;
 		}
 
+	},
+	userInfo: function() {
+		if (infoUser.username !== "")
+			return infoUser;
+		else
+			return false;
 	}
 };
 
@@ -32,7 +35,7 @@ connect.store = {
 			username: info.username,
 			accessLevel: info.accessLevel
 		};
-
+		
 		cookies.usage.setCookies("auth-info", infoUser);
 	}
 };

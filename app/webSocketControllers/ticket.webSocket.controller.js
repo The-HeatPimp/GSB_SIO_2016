@@ -88,9 +88,44 @@ module.exports = function(socket) {
 			});
 		});
 	});
-
+	socket.on('requestLastTicket', function(data) {
+		data = JSON.parse(data);
+		Ticket.find({
+			"creator": socket.decoded_token
+		}).sort({
+			updated_at: -1
+		}).exec(function(err, ticket) {
+			if (err)
+				socket.emit('requestLastTicket', {
+					"success": false,
+					"error": err
+				});
+			else if (!ticket)
+				socket.emit('requestLastTicket', {
+					"success": false,
+					"error": "no ticket found in database"
+				});
+			else
+				sentTicket = [];
+			for (var i = 0; i < data.nb; i++) {
+				if(!ticket[i])
+					break;
+				if (ticket[i].message[ticket[i].message.length - 1].sender != socket.decoded_token) {
+					sentTicket[i] = {
+						title: ticket[i].title,
+						message: ticket[i].message[ticket[i].message.length - 1]
+					};
+				}	else 
+				++ data.nb;
+			}
+			socket.emit('requestLastTicket', {
+				"success": true,
+				"ticket": sentTicket
+			});
+		});
+	});
 	socket.on('listTicketAdmin', function(data) {
-		if (AdminHandler.accessLevel(socket.decoded_token)>1) {
+		if (AdminHandler.accessLevel(socket.decoded_token) > 1) {
 			Ticket.find({
 				"closed": false
 			}, function(err, ticket) {
@@ -154,7 +189,7 @@ module.exports = function(socket) {
 	});
 
 	socket.on('closeTicket', function(data) {
-		if (AdminHandler.accessLevel(socket.decoded_token)>1) {
+		if (AdminHandler.accessLevel(socket.decoded_token) > 1) {
 			data = JSON.parse(data);
 			Ticket.findOne({
 				_id: data.id

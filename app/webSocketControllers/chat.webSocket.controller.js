@@ -53,4 +53,39 @@
 				}
 			});
 		});
+
+		socket.on('requestLastMessage', function(data) {
+			data = JSON.parse(data); 	
+			var messages = [];
+			console.log('run');
+			console.log(socket.decoded_token);
+			Chat.find({
+				receiver: socket.decoded_token
+			}).sort({
+				date: -1
+			}).exec(function(err, message) {
+				console.log('run2');
+				if (err) {
+					console.log('err');
+					socket.emit('requestAllMessage', {
+						"success": false,
+						"error": err
+					});
+
+				} else {
+					var response = [];
+					for (var i = 0; i < data.nb; i++) {
+						if (message[i]) {
+							response.push(message[i]);
+						}
+					}
+					socket.emit('requestLastMessage', {
+						"success": true,
+						"message": response
+					});
+				}
+
+			});
+
+		});
 	};

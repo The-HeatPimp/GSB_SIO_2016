@@ -1,6 +1,7 @@
 var cookies = cookies || {};
 cookies.usage = {
 	setCookies: function(key, value) {
+		value = JSON.stringify(value);
 		var expires = new Date();
 		expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
@@ -8,7 +9,11 @@ cookies.usage = {
 
 	getCookies: function(key) {
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-		return keyValue ? keyValue[2] : null;
+		if(keyValue) {
+			keyValue = JSON.parse(keyValue[2]);
+			return keyValue;
+		}	else
+		return null;
 	},
 
 	deleteCookies: function(key) {

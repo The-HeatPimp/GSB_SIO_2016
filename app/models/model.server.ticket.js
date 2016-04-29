@@ -13,7 +13,6 @@ var myEvent = require('../controllers/event');
 
 
 
-
 /*
 	Set up the new shema TicketShema
  */
@@ -31,6 +30,9 @@ var TicketSchema = new Schema({
   },
   closed: {
     type: Boolean
+  },
+  updated_at: {
+    type: Date
   },
   created_at: {
     type: Date
@@ -55,6 +57,7 @@ var TicketSchema = new Schema({
 TicketSchema.pre('save',
   function(next) {
     var currentDate = new Date();
+    this.updated_at = currentDate;
     if (!this.created_at)
       this.created_at = currentDate;
     next();

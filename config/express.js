@@ -103,7 +103,8 @@ module.exports = function() {
                         success: true,
                         expires: 3600,
                         accessLevel: user.accessLevel,
-                        token: token
+                        token: token,
+                        username: req.body.username
                     });
                 }
 

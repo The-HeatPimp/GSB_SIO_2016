@@ -3,7 +3,7 @@
 
             var token = cookies.usage.getCookies("auth-token");
             var info = connect.retrieve.info();
-            var socket = io.connect('http://' + info.address + '/', {
+            socket = io.connect('http://' + info.address + '/', {
                 'query': 'token=' + token
             });
             socket.on("error", function(error) {
