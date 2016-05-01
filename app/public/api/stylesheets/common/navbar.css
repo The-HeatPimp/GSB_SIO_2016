@@ -1,0 +1,14 @@
+.navbar {
+	border-radius: 0px !important;
+}
+
+nav .glyphicon {
+	margin-right: 8px;
+}
+
+.brand {
+	max-width: 50px;
+}
+
+.navbar-brand {
+}

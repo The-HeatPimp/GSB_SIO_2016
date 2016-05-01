@@ -17,5 +17,6 @@ module.exports = function() {
 	require('../app/models/model.server.schedule.js');
 	require('../app/models/model.server.vehicleRoute.js');
 	require('../app/models/model.server.chat.js');
+	console.log("//////// Models loaded ".verbose);
 	return db;
 };

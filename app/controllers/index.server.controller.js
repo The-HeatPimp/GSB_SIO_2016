@@ -1,10 +1,8 @@
-///////////////////////////////////
-// CONTROLLER OF THE INDEX PAGE  //
-///////////////////////////////////
+/////////////////////////////////////////////
+// CONTROLLER : UNPROTECTED PAGE RENDERING //
+/////////////////////////////////////////////
 
-/*
-    Method : Render the page Login
- */
+// Render the login page
 exports.renderLogin = function(req, res, next) {
     if (!req.user) {
         res.render('authentication/login', {
@@ -14,4 +12,3 @@ exports.renderLogin = function(req, res, next) {
         return res.redirect('/');
     }
 };
-

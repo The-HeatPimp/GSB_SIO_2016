@@ -1,0 +1,137 @@
+.description_index {
+	font-family: "Open Sans";
+	margin-top: 30px;
+	margin-bottom: 40px;
+}
+
+.deco {
+	cursor: pointer;
+}
+
+.home-notification .notification-content {
+	box-shadow: -3px 3px 3px -3px #212121;
+	padding: 5px;
+	background-color: #EEE;
+	min-height: 201px;
+}
+
+.chat-items {
+	height: 120px;
+	margin-right: 10px;
+	margin-left: 10px;
+	border-radius: 5px;
+	text-align: left;
+	padding: 0;
+	list-style-type: none;
+	overflow: hidden;
+}
+
+.chat-items li {
+	margin-bottom: 2px;
+	margin-top: 2px;
+	border-radius: 5px;
+	background-color: white;
+	list-style: none;
+	height: 38px;
+	line-height: 40px;
+	box-shadow: inset -10px 0px 0px 0px #212121;
+	overflow: hidden;
+}
+
+.chat-items .noMessage {
+	height: 116px;
+	text-align: center;
+	line-height: 116px;
+}
+
+.event-items .noMessage {
+	height: 132px;
+	text-align: center;
+	line-height: 116px;
+}
+
+.chat-from {
+	font-size: 20px;
+	margin-left: 5px;
+}
+
+.chat-date {
+	font-size: 10px;
+	margin-left: 5px;
+}
+
+.chat-text {
+	font-size: 15px;
+	margin-left: 5px;
+}
+
+.ticket-items {
+	height: 120px;
+	margin-right: 10px;
+	margin-left: 10px;
+	border-radius: 5px;
+	text-align: left;
+	padding: 0;
+	list-style-type: none;
+	overflow: hidden;
+}
+
+.ticket-items li {
+	margin-bottom: 2px;
+	margin-top: 2px;
+	border-radius: 5px;
+	background-color: white;
+	list-style: none;
+	height: 38px;
+	line-height: 40px;
+	box-shadow: inset -10px 0px 0px 0px #212121;
+	overflow: hidden;
+}
+
+.ticket-items .noMessage {
+	height: 116px;
+	text-align: center;
+	line-height: 116px;
+}
+
+.ticket-from {
+	font-size: 20px;
+	margin-left: 5px;
+}
+
+.ticket-date {
+	font-size: 10px;
+	margin-left: 5px;
+}
+
+.ticket-text {
+	font-size: 15px;
+	margin-left: 5px;
+}
+
+.limit-col {
+	height: 132px;
+}
+
+.thumbnail {
+	height: 132px;
+	overflow: hidden;
+	text-align: left;
+	box-shadow: inset -10px 0px 0px 0px #212121;
+}
+.thumbnail * {
+	margin-left: 20px;
+	line-height: 20px;
+}
+
+.thumbnail h2 {
+	font-size: 20px;
+}
+
+.thumbnail .dateEvent {
+	font-size: 10px;
+}
+
+.thumbnail .locationEvent {
+	font-size: 15px;
+}
