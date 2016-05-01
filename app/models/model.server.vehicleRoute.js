@@ -1,17 +1,12 @@
-/////////////////////////
-// DB MODEL : VEHICULE //
-/////////////////////////
+/////////////////////
+// MODEL : VEHICLE //
+/////////////////////
 
-// TODO no update trajet, bind schedule route
-/*
-    Calling necessary modules
- */
 
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
-/*
-    Set up the new shema TicketShema
- */
+
+// schema definition
 var VehicleSchema = new Schema({
 	type: String,
 	seat: Number,
@@ -21,20 +16,11 @@ var VehicleSchema = new Schema({
 	free: Boolean
 });
 
-//////////////////////
-// DB MODEL : ROUTE //
-//////////////////////
+///////////////////
+// MODEL : ROUTE //
+///////////////////
 
-
-/*
-    Calling necessary modules
- */
-
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
-/*
-    Set up the new shema TicketShema
- */
+// Schema definition
 var RouteSchema = new Schema({
 	to: String,
 	vehicle: {
@@ -51,6 +37,7 @@ var RouteSchema = new Schema({
 
 });
 
+// Push the document to the main web-socket controller
 RouteSchema.post('save',
   function(RouteShema) {
     myEvent.emit("pushRoute", {
@@ -64,6 +51,7 @@ RouteSchema.post('save',
     });
   });
 
+// Save the models
 mongoose.model('Route', RouteSchema);
 
 mongoose.model('Vehicle', VehicleSchema);

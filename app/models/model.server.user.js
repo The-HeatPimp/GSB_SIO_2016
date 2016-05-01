@@ -1,20 +1,12 @@
-/////////////////////
-// DB MODEL : USER //
-/////////////////////
-
-
-/*
-    Calling necessary modules
- */
+////////////////
+// MODEL USER //
+////////////////
 
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	validator = require('validator');
 	
-/*
-    Set up the new shema TicketShema
- */
-
+// Schema definition
 var UserSchema = new Schema({
 	firstName: String,
 	lastName: String,
@@ -37,7 +29,7 @@ var UserSchema = new Schema({
 });
 
 
-
+// Operation before saving the document
 UserSchema.pre('save',
 	function(next) {
 		// Hash the password before sending it to the database
@@ -53,7 +45,7 @@ UserSchema.pre('save',
 
 		next();
 	});
-
+// Model method : find a unique username
 UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	// catch the request prefix
 	var _this = this;
@@ -80,5 +72,5 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 		}
 	);
 };
-
+// Save the model
 mongoose.model('User', UserSchema);

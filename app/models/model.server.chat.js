@@ -1,7 +1,12 @@
+/////////////////////////
+// MODEL : CHAT SYSTEM //
+/////////////////////////
+
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 var myEvent = require('../controllers/event');
 
+// schema definition
 var ChatSchema = new Schema({
 	content: String,
 	date: Date,
@@ -9,7 +14,7 @@ var ChatSchema = new Schema({
 	receiver: String
 });
 
-
+// set the property date before saving the document
 ChatSchema.pre('save',
 	function(next) {
 		var currentDate = new Date();
@@ -17,6 +22,8 @@ ChatSchema.pre('save',
 			this.date = currentDate;
 		next();
 	});
+
+// Push the document to the main web-socket controller
 ChatSchema.post('save',
 	function(ChatSchema) {
 		myEvent.emit("pushChat", {
@@ -27,4 +34,5 @@ ChatSchema.post('save',
 			receiver: this.receiver
 		});
 	});
+// save the model
 mongoose.model('Chat', ChatSchema);

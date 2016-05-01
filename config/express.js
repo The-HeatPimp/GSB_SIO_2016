@@ -12,7 +12,6 @@ var config = require('./config'),
     bodyParser = require('body-parser'),
     fs = require('fs'),
     morgan = require('morgan');
-    
 
 
 
@@ -24,7 +23,7 @@ module.exports = function() {
     app.set('superSecret', env.jwtKey); // secret variable
 
     // Parsing methods
-    
+
     app.use(bodyParser.urlencoded({
         extended: false
     }));
@@ -44,13 +43,19 @@ module.exports = function() {
         flags: 'a'
     });
     app.use(morgan('common', {
-        stream: accessLogStream
+        stream: accessLogStream,
+
     }));
+
 
     /*
         Console logs
      */
-    app.use(morgan('dev'));
+    app.use(morgan('dev', {
+        skip: function(req, res) {
+            return res.statusCode < 400;
+        }
+    }));
 
 
     /*

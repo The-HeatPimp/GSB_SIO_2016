@@ -1,10 +1,9 @@
-///////////////////////////////////
-// CONTROLLER OF THE INDEX PAGE  //
-///////////////////////////////////
+////////////////////////////////////////////
+// CONTROLLER : PROTECTED PAGES RENDERING //
+////////////////////////////////////////////
 
-/*
-    Method : Render the page Login
- */
+
+// Render The Home page
 exports.renderHome = function(req, res, next) {
     if (!req.user) {
         res.render('website/home', {

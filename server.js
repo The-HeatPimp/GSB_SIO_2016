@@ -11,8 +11,10 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 /*
 	Calling necessary modules
  */
-var colors = require('colors');
 
+// console coloration module
+
+var colors = require('colors');
 colors.setTheme({
 	input: 'grey',
 	verbose: 'cyan',
@@ -24,6 +26,7 @@ colors.setTheme({
 	debug: 'blue',
 	error: 'red'
 });
+
 var fs = require('fs'),
 	// https = require('https'),
 	http = require('http'),

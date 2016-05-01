@@ -1,21 +1,11 @@
-////////////////////////
-// DB MODEL : SCHEDULE //
-////////////////////////
-
-/*
-	Calling necessary modules
- */
-
+//////////////////////
+// MODEL : SCHEDULE //
+//////////////////////
 
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
-
-/*
-	Set up the new shema TicketShema
- */
-
-
+// schema definition
 var ScheduleSchema = new Schema({
   participant: [{
     username: String,
@@ -32,11 +22,5 @@ var ScheduleSchema = new Schema({
   location: String
 });
 
-
-
-
-/*
-    Save This schema as the model : User
- */
-
+// save the model
 mongoose.model('Schedule', ScheduleSchema);

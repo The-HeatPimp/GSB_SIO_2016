@@ -1,22 +1,10 @@
-///////////////////////
-// DB MODEL : TICKET //
-///////////////////////
-
-/*
-	Calling necessary modules
- */
-
+////////////////////
+// MODEL : TICKET //
+////////////////////
 
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 var myEvent = require('../controllers/event');
-
-
-
-/*
-	Set up the new shema TicketShema
- */
-
 
 var TicketSchema = new Schema({
   title: {
@@ -53,7 +41,7 @@ var TicketSchema = new Schema({
   }]
 });
 
-
+// set the property created_at and updated_at before saving the document
 TicketSchema.pre('save',
   function(next) {
     var currentDate = new Date();
@@ -62,6 +50,8 @@ TicketSchema.pre('save',
       this.created_at = currentDate;
     next();
   });
+
+// Push the document to the main web-socket controller
 TicketSchema.post('save',
   function(TicketSchema) {
     myEvent.emit("pushTicket", {
@@ -74,8 +64,5 @@ TicketSchema.post('save',
     });
   });
 
-/*
-    Save This schema as the model : User
- */
-
+// save the model
 mongoose.model('Ticket', TicketSchema);
