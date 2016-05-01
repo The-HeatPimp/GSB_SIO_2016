@@ -3,7 +3,6 @@
 /////////////////////////////////////
 
 var Schedule = require('mongoose').model('Schedule');
-var myEvent = require('../controllers/event');
 var top = require('../../io.js');
 var connectedUsers = top.connectedUsers();
 
@@ -18,57 +17,6 @@ module.exports = function(socket) {
 		}
 	}
 
-	// Binding route-schedule :
-	// Add an event when a route is saved
-	myEvent.on('pushRoute', function(data) {
-		// Validation process
-		var isValid = true;
-		var savedEvent = {};
-		savedEvent = {
-			participant: data.passenger,
-			date_start: data.dateStart,
-			date_end: data.dateEnd,
-			title: "Location d'un véhicule",
-			description: "trajet vers" + data.to,
-			creator: data.driver,
-			location: data.to
-		};
-		participant.push(data.driver);
-		for (var prop in savedEvent) {
-			if (!prop) {
-				isValid = false;
-			}
-		}
-		// Legit
-		if (isValid) {
-			// save the event
-			var event = new Schedule(savedEvent);
-			event.save(function(err) {
-				// send the response to the client
-				if (err) {
-					socket.emit('createRouteEvent', {
-						"success": false,
-						"error": err
-					});
-
-				} else {
-					socket.emit('createRouteEvent', {
-						"success": true,
-						"event": event
-					});
-				}
-
-			});
-		}
-		// Not legit
-		else {
-			// send the error to the client
-			socket.emit('createRouteEvent', {
-				"success": false,
-				"error": "incomplete request"
-			});
-		}
-	});
 	// Method : CreateEvent : 
 	// Save an event in the database
 	socket.on('createEvent', function(data) {

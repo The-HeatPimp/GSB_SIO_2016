@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>GSB  Accueil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
+    <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
+    <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
+    <script>
+    var socket;
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/common/loadingScreen.js"></script>
+    <script src="javascripts/assets/introjs/intro.js"></script>
+    <script src="javascripts/common/cookies.js"></script>
+    <script src="javascripts/common/connect.js"></script>
+    <script src="javascripts/common/connectSocket.js"></script>
+    <script src="javascripts/common/disconnect.js"></script>
+    <script src="javascripts/common/hideByAccessLevel.js"></script>
+    <script src="javascripts/common/addParam.js"></script>
+    <script src="javascripts/unique/website/chat/script.js"></script>
+  </head>
+  
+  <body>
+    <nav role="navigation" class="navbar navbar-inverse">
+      <div class="navbar-header">
+        <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <a href="home" class="navbar-brand">GSB</a>
+      </div>
+      <div id="navbarCollapse" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav dynamic-add">
+          <li ><a href="ticket"data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
+          <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
+          <li>
+            <a href="agenda" data-intro='Communiquez avec les autres utilisateurs' data-step="3">Agenda</a>
+          </li>
+          <li>
+            <a href="chat" data-intro='Consultez et gérez votre emploi du temps' data-step="4">Chat</a>
+          </li>
+          <li>
+            <a href="support" class="access-2" data-intro='Consultez et gérez votre emploi du temps' data-step="9">Support</a>
+          </li>
+          <li>
+            <a href="admin" class="access-3" data-intro='Consultez et gérez votre emploi du temps' data-step="10">Admin</a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a  href="#" id="helpButton"><span class="deco glyphicon glyphicon-question-sign"></span>Aide</a></li>
+          <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="5" data-intro='Onglet de connexion et déconnexion'></a></li>
+        </ul>
+      </div>
+    </nav>
+    <p>agenda</p>
+  </body>
+</html>

@@ -4,6 +4,7 @@
 
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
+	crypto = require('crypto');
 	validator = require('validator');
 	
 // Schema definition
@@ -27,7 +28,6 @@ var UserSchema = new Schema({
 	updated_at: Date,
 	password: String
 });
-
 
 // Operation before saving the document
 UserSchema.pre('save',

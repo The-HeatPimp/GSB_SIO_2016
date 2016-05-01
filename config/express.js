@@ -11,6 +11,7 @@ var config = require('./config'),
     jwt = require('jsonwebtoken'),
     bodyParser = require('body-parser'),
     fs = require('fs'),
+    crypto = require('crypto');
     morgan = require('morgan');
 
 
@@ -92,7 +93,8 @@ module.exports = function() {
             } else if (user) {
 
                 // check if password matches
-                if (user.password != req.body.password) {
+                var hashedPass = crypto.createHash('md5').update(req.body.password).digest('hex');
+                if (user.password != hashedPass) {
                     res.json({
                         success: false,
                         message: 'Authentication failed. Wrong password.'
@@ -101,7 +103,7 @@ module.exports = function() {
                     // if user is found and password is right
                     // create a token
                     var token = jwt.sign(user.username, app.get('superSecret'), {
-                        expiresIn: '24h' // expires in 24 hours
+                        expiresInSecond: 1 * 24 * 60 * 60 * 1000 // expires in 24 hours
                     });
                     // Send the token
                     res.json({
