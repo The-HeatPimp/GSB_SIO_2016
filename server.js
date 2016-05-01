@@ -11,8 +11,20 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 /*
 	Calling necessary modules
  */
-var
-	fs = require('fs'),
+var colors = require('colors');
+
+colors.setTheme({
+	input: 'grey',
+	verbose: 'cyan',
+	prompt: 'grey',
+	info: 'green',
+	data: 'grey',
+	help: 'cyan',
+	warn: 'yellow',
+	debug: 'blue',
+	error: 'red'
+});
+var fs = require('fs'),
 	// https = require('https'),
 	http = require('http'),
 	config = require('./config/config'),
@@ -23,17 +35,16 @@ var
 var db = mongoose(),
 	app = express();
 
-
 /*
 	Launching the server on the port defined in the environment configs
  */
-var server = require('http').createServer(app); 
+var server = require('http').createServer(app);
 var io = require('./io')(server);
 
 server.listen(config.port, function() {
 	var host = server.address().address;
 	var port = server.address().port;
-	console.log(process.env.NODE_ENV + ' server running at http://localhost:' + config.port);
+	console.log(("//////// " + process.env.NODE_ENV + ' server running at http://localhost:' + config.port).info);
 });
 
 /*

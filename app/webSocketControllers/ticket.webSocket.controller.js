@@ -1,11 +1,19 @@
 var Ticket = require('mongoose').model('Ticket');
 var AdminHandler = require('../controllers/authorizeAdmin');
-
+var top = require('../../io.js');
+var connectedUsers = top.connectedUsers();
 
 module.exports = function(socket) {
-
+	function retrieveName(sessionID) {
+		for (var item = 0; item < connectedUsers.length; item++) {
+			if (connectedUsers[item].id === sessionID) {
+				return connectedUsers[item].user;
+			}
+		}
+	}
 
 	socket.on('createTicket', function(data) {
+		name = retrieveName(socket.id);
 		console.log(data);
 		var isValid = true;
 		data = JSON.parse(data);
@@ -16,11 +24,11 @@ module.exports = function(socket) {
 			title: data.title,
 			typeRequest: data.typeRequest,
 			priority: data.priority,
-			creator: socket.decoded_token,
+			creator: name,
 			created_at: currentDate,
 			message: [{
 				text: data.message,
-				sender: socket.decoded_token,
+				sender: name,
 				dateMessage: currentDate
 			}],
 			closed: false
@@ -57,8 +65,9 @@ module.exports = function(socket) {
 	});
 
 	socket.on('listTicketUser', function(data) {
+		name = retrieveName(socket.id);
 		Ticket.find({
-			"creator": socket.decoded_token
+			"creator": name
 		}, function(err, ticket) {
 			if (err)
 				socket.emit('listTicketUser', {
@@ -89,9 +98,10 @@ module.exports = function(socket) {
 		});
 	});
 	socket.on('requestLastTicket', function(data) {
+		name = retrieveName(socket.id);
 		data = JSON.parse(data);
 		Ticket.find({
-			"creator": socket.decoded_token
+			"creator": name
 		}).sort({
 			updated_at: -1
 		}).exec(function(err, ticket) {
@@ -108,15 +118,15 @@ module.exports = function(socket) {
 			else
 				sentTicket = [];
 			for (var i = 0; i < data.nb; i++) {
-				if(!ticket[i])
+				if (!ticket[i])
 					break;
-				if (ticket[i].message[ticket[i].message.length - 1].sender != socket.decoded_token) {
+				if (ticket[i].message[ticket[i].message.length - 1].sender != name) {
 					sentTicket[i] = {
 						title: ticket[i].title,
 						message: ticket[i].message[ticket[i].message.length - 1]
 					};
-				}	else 
-				++ data.nb;
+				} else
+					++data.nb;
 			}
 			socket.emit('requestLastTicket', {
 				"success": true,
@@ -125,7 +135,8 @@ module.exports = function(socket) {
 		});
 	});
 	socket.on('listTicketAdmin', function(data) {
-		if (AdminHandler.accessLevel(socket.decoded_token) > 1) {
+		name = retrieveName(socket.id);
+		if (AdminHandler.accessLevel(name) > 1) {
 			Ticket.find({
 				"closed": false
 			}, function(err, ticket) {
@@ -189,7 +200,8 @@ module.exports = function(socket) {
 	});
 
 	socket.on('closeTicket', function(data) {
-		if (AdminHandler.accessLevel(socket.decoded_token) > 1) {
+		name = retrieveName(socket.id);
+		if (AdminHandler.accessLevel(name) > 1) {
 			data = JSON.parse(data);
 			Ticket.findOne({
 				_id: data.id
@@ -228,6 +240,7 @@ module.exports = function(socket) {
 	});
 
 	socket.on('answerToTicket', function(data) {
+		name = retrieveName(socket.id);
 		data = JSON.parse(data);
 		Ticket.findOne({
 			_id: data.id
@@ -247,7 +260,7 @@ module.exports = function(socket) {
 				ticket.message.push({
 					text: data.text,
 					dateMessage: currentDate,
-					sender: socket.decoded_token
+					sender: name
 				});
 				ticket.save(function(err) {
 					if (err) {

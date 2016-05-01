@@ -52,7 +52,7 @@
 									$('.event-items').append("<div class='col-sm-4 col-md-4 col-xs-12 limit-col'><div class='thumbnail'><h2>"+ data.event[i].title +"</h2> <p class = 'dateEvent'> "+formatDate(data.event[i].date_start) +" </p><p class = 'locationEvent'> "+ data.event[i].location +" </p> </div> </div>");
 									}
 								} else {
-									$('.event-items').append("<li class='noMessage'>Vous n'avez reçu aucun message</li>");
+									$('.event-items').append("<div class='col-sm-12 limit-col'><div class='thumbnail noMessage'>Vous n'avez reçu aucun message</div></div>");
 								}
 							}
 						});

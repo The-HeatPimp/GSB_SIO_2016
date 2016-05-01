@@ -1,8 +1,16 @@
 	var Schedule = require('mongoose').model('Schedule');
 	var myEvent = require('../controllers/event');
-
+	var top = require('../../io.js');
+	var connectedUsers = top.connectedUsers();
 
 	module.exports = function(socket) {
+		function retrieveName(sessionID) {
+			for (var item = 0; item < connectedUsers.length; item++) {
+				if (connectedUsers[item].id === sessionID) {
+					return connectedUsers[item].user;
+				}
+			}
+		}
 
 		myEvent.on('pushRoute', function(data) {
 			var isValid = true;
@@ -51,6 +59,7 @@
 		});
 
 		socket.on('createEvent', function(data) {
+			name = retrieveName(socket.id);
 			var isValid = true;
 			console.log(data);
 			data = JSON.parse(data);
@@ -61,7 +70,7 @@
 				date_end: data.date_end,
 				title: data.title,
 				description: data.description,
-				creator: socket.decoded_token,
+				creator: name,
 				location: data.location
 			};
 			for (var prop in savedEvent) {
@@ -96,11 +105,12 @@
 		});
 
 		socket.on('deleteEvent', function(data) {
+			name = retrieveName(socket.id);
 			Schedule.findOne({
 				$and: [{
 					_id: data.id
 				}, {
-					"creator": socket.decoded_token
+					"creator": name
 				}]
 			}, function(err, event) {
 				if (err)
@@ -236,6 +246,7 @@
 		});
 
 		socket.on('acceptEvent', function(data) {
+			name = retrieveName(socket.id);
 			data = JSON.parse(data);
 			Schedule.find({
 				_id: data.id
@@ -253,7 +264,7 @@
 				else {
 					var happened = false;
 					for (var item in event.participant)
-						if (item.username == socket.decoded_token) {
+						if (item.username == namen) {
 							item.participate = true;
 							happened = true;
 						}
@@ -279,6 +290,7 @@
 		});
 
 		socket.on('denyEvent', function(data) {
+			name = retrieveName(socket.id);
 			data = JSON.parse(data);
 			Schedule.find({
 				_id: data.id
@@ -296,7 +308,7 @@
 				else {
 					var happened = false;
 					for (var index = 0; index < event.participant.length(); i++)
-						if (event.participant[index].username == socket.decoded_token) {
+						if (event.participant[index].username == name) {
 							event.participant.splice(index, 1);
 							happened = true;
 						}
@@ -322,14 +334,15 @@
 		});
 
 		socket.on('listEvent', function(data) {
+			name = retrieveName(socket.id);
 			data = JSON.parse(data);
 			var currentDate = new Date();
 			Schedule.find({
 					$and: [{
 						$or: [{
-							"creator": socket.decoded_token
+							"creator": name
 						}, {
-							"participant.username": socket.decoded_token
+							"participant.username": name
 						}]
 					}, {
 						"date_end": {
@@ -369,14 +382,15 @@
 		});
 
 		socket.on('requestNextEvent', function(data) {
+			name = retrieveName(socket.id);
 			data = JSON.parse(data);
 			var currentDate = new Date();
 			Schedule.find({
 				$and: [{
 					$or: [{
-						"creator": socket.decoded_token
+						"creator": name
 					}, {
-						"participant.username": socket.decoded_token
+						"participant.username": name
 					}]
 				}, {
 					"date_end": {
@@ -384,7 +398,7 @@
 					}
 				}]
 			}).sort({
-				date_start: -1
+				date_start: 1
 			}).exec(function(err, event) {
 				if (err)
 					socket.emit('requestNextEvent', {

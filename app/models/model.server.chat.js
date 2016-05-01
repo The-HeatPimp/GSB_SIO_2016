@@ -19,7 +19,6 @@ ChatSchema.pre('save',
 	});
 ChatSchema.post('save',
 	function(ChatSchema) {
-		console.log('pushing');
 		myEvent.emit("pushChat", {
 			id: this._id,
 			content: this.content,
@@ -28,5 +27,4 @@ ChatSchema.post('save',
 			receiver: this.receiver
 		});
 	});
-console.log('load model chat');
 mongoose.model('Chat', ChatSchema);

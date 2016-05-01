@@ -161,6 +161,7 @@ module.exports = function() {
      */
     require('../app/routes/index.server.routes.js')(app);
     require('../app/routes/api.server.routes.js')(apiRoutes);
+    console.log("//////// Routes loaded".verbose);
 
     return app;
 };

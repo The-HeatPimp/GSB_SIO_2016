@@ -53,7 +53,6 @@ var RouteSchema = new Schema({
 
 RouteSchema.post('save',
   function(RouteShema) {
-    console.log('pushing');
     myEvent.emit("pushRoute", {
       id: this._id,
       to: this.to,

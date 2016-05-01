@@ -1,10 +1,20 @@
 	var User = require('mongoose').model('User');
 	var AdminHandler = require('../controllers/authorizeAdmin');
+	var top = require('../../io.js');
+	var connectedUsers = top.connectedUsers();
 
 	module.exports = function(socket) {
+		function retrieveName(sessionID) {
+			for (var item = 0; item < connectedUsers.length; item++) {
+				if (connectedUsers[item].id === sessionID) {
+					return connectedUsers[item].user;
+				}
+			}
+		}
 
 		socket.on('createUser', function(data) {
-			if (AdminHandler.accessLevel(socket.decoded_token) > 2) {
+			name = retrieveName(socket.id);
+			if (AdminHandler.accessLevel(name) > 2) {
 				var isValid = true;
 				data = JSON.parse(data);
 				var savedUser = new User();
@@ -139,7 +149,8 @@
 		});
 
 		socket.on('deleteUser', function(data) {
-			if (AdminHandler.accessLevel(socket.decoded_token) > 2) {
+			name = retrieveName(socket.id);
+			if (AdminHandler.accessLevel(name) > 2) {
 				data = JSON.parse(data);
 				User.find({
 					_id: data.id
@@ -176,7 +187,8 @@
 		});
 
 		socket.on('updateUser', function(data) {
-			if (AdminHandler.accessLevel(socket.decoded_token)) {
+			name = retrieveName(socket.id);
+			if (AdminHandler.accessLevel(name)) {
 				data = JSON.parse(data);
 				var isValid = false;
 				User.find({

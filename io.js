@@ -1,6 +1,8 @@
 var User = require('mongoose').model('User');
+var connectedUsers = [];
 
 module.exports = function(server) {
+	console.log("//////// WebSocketControllers loaded".verbose);
 	var io = require('socket.io')(server);
 	var socketioJwt = require('socketio-jwt');
 	var jwt = require('jsonwebtoken');
@@ -11,7 +13,7 @@ module.exports = function(server) {
 	 */
 	var config = require("./config/env/development");
 	var jwtKey = config.jwtKey;
-	var connectedUsers = [];
+
 
 	io.use(socketioJwt.authorize({
 		secret: jwtKey,
@@ -24,9 +26,9 @@ module.exports = function(server) {
 	});
 
 
-
 	io.sockets.on('connection', function(socket) {
 		// Connection confirmed to the user	
+		var sessionid = socket.id;
 		socket.join("main");
 		myEvent.on('pushChat', function(data) {
 			for (var f = 0; f < connectedUsers.length; f++) {
@@ -43,16 +45,15 @@ module.exports = function(server) {
 		}, function(err, user) {
 
 			if (err) {
-				console.log("erreur Admission Admin : " + err);
+				console.log(("erreur Admission Admin : " + err).warn);
 			} else if (!user[0])
-				console.log("error: no user found during admission");
+				console.log("error: no user found during admission".warn);
 			else {
 				connectedUsers.push({
 					user: socket.decoded_token,
 					id: socket.id,
 					accessLevel: user[0].accessLevel
 				});
-
 			}
 			listUserConnected();
 		});
@@ -71,8 +72,8 @@ module.exports = function(server) {
 		setInterval(sendTime, 10000);
 
 		socket.on('disconnect', function() {
-			console.log(socket.decoded_token + ' Got disconnect!');
-			var i = connectedUsers.indexOf(socket.decoded_token);
+			var name = retrieveName(socket.id);
+			var i = connectedUsers.indexOf(name);
 			connectedUsers.splice(i, 1);
 			listUserConnected();
 			socket.disconnect();
@@ -91,15 +92,38 @@ module.exports = function(server) {
 		var vehicleRouteController = require('./app/webSocketControllers/vehicleRoute.webSocket.controller')(socket);
 		var chatController = require('./app/webSocketControllers/chat.webSocket.controller')(socket);
 
+
+		function retrieveName(sessionID) {
+			for (var item = 0; item < connectedUsers.length; item++) {
+				if (connectedUsers[item].id === sessionID) {
+					return connectedUsers[item].user;
+				}
+			}
+		}
+
 		function listUserConnected() {
-			var stringUser = "list = ";
+			var stringUser = "Connected users :  ".data;
 			for (var j = 0; j < connectedUsers.length; j++) {
-				stringUser += (connectedUsers[j].user + " Access Level = " + connectedUsers[j].accessLevel + " , ");
+				switch (connectedUsers[j].accessLevel) {
+					case 1:
+						stringUser += ("\n" + (connectedUsers[j].user).yellow);
+						break;
+					case 2:
+						stringUser += ("\n" + (connectedUsers[j].user).orange);
+						break;
+					case 3:
+						stringUser += ("\n" + (connectedUsers[j].user).red);
+						break;
+
+				}
 			}
 			console.log(stringUser);
 		}
 
 	});
 
-	module.exports.connectedUsers = connectedUsers;
+
+};
+module.exports.connectedUsers = function() {
+	return connectedUsers;
 };

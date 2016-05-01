@@ -38,4 +38,5 @@ var ScheduleSchema = new Schema({
 /*
     Save This schema as the model : User
  */
+
 mongoose.model('Schedule', ScheduleSchema);

@@ -1,15 +1,24 @@
 	var Chat = require('mongoose').model('Chat');
-	var connectedUsers = require('../../io.js').connectedUsers;
+	var top = require('../../io.js');
+	var connectedUsers = top.connectedUsers();
 
 	module.exports = function(socket) {
+		function retrieveName(sessionID) {
+			for (var item = 0; item < connectedUsers.length; item++) {
+				if (connectedUsers[item].id === sessionID) {
+					return connectedUsers[item].user;
+				}
+			}
+		}
 		socket.on('sendMessage', function(data) {
+			name = retrieveName(socket.id);
 			data = JSON.parse(data);
 			var isValid = true;
 			var currentDate = new Date();
 			var validation = {
 				content: data.content,
 				date: currentDate,
-				sender: socket.decoded_token,
+				sender: name,
 				receiver: data.receiver
 			};
 			for (var prop in validation) {
@@ -55,18 +64,15 @@
 		});
 
 		socket.on('requestLastMessage', function(data) {
-			data = JSON.parse(data); 	
+			name = retrieveName(socket.id);
+			data = JSON.parse(data);
 			var messages = [];
-			console.log('run');
-			console.log(socket.decoded_token);
 			Chat.find({
-				receiver: socket.decoded_token
+				receiver: name
 			}).sort({
 				date: -1
 			}).exec(function(err, message) {
-				console.log('run2');
 				if (err) {
-					console.log('err');
 					socket.emit('requestAllMessage', {
 						"success": false,
 						"error": err

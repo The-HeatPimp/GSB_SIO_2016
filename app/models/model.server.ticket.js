@@ -64,7 +64,6 @@ TicketSchema.pre('save',
   });
 TicketSchema.post('save',
   function(TicketSchema) {
-    console.log('pushing');
     myEvent.emit("pushTicket", {
       id: this._id,
       title: this.title,
@@ -78,4 +77,5 @@ TicketSchema.post('save',
 /*
     Save This schema as the model : User
  */
+
 mongoose.model('Ticket', TicketSchema);
