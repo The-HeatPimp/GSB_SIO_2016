@@ -76,7 +76,7 @@ module.exports = function(socket) {
 
 	// Method : ListTicketUser :
 	// List all the ticket created by the user
-	socket.on('listTicketUser', function(data) {
+	socket.on('listTicketUser', function() {
 		name = retrieveName(socket.id);
 		// DB request : find all the ticket created by the user
 		Ticket.find({
@@ -104,6 +104,43 @@ module.exports = function(socket) {
 						importance: ticket[i].importance,
 						created_at: ticket[i].created_at,
 						closed: ticket[i].closed
+					};
+				}
+				// send the response to the user
+				socket.emit('listTicketUser', {
+					"success": true,
+					"ticket": sentTicket
+				});
+			}
+		});
+	});
+
+
+// Method : ListTicketID :
+	// List all the ticket ID created by the user
+	socket.on('listTicketID', function() {
+		name = retrieveName(socket.id);
+		// DB request : find all the ticket created by the user
+		Ticket.find({
+			"creator": name
+		}, function(err, ticket) {
+			// send the error to the client
+			if (err)
+				socket.emit('listTicketUser', {
+					"success": false,
+					"error": err
+				});
+			else if (!ticket)
+				socket.emit('listTicketUser', {
+					"success": false,
+					"error": "no ticket found in database"
+				});
+			else {
+				// format the response
+				sentTicket = [];
+				for (var i = 0; i < ticket.length; i++) {
+					sentTicket[i] = {
+						id: ticket[i].id,
 					};
 				}
 				// send the response to the user
