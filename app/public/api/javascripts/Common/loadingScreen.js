@@ -1,4 +1,5 @@
 $(function() {
+    $(document).ready(function() {
     function onReady(callback) {
         var intervalID = window.setInterval(checkReady, 1000);
 
@@ -18,4 +19,5 @@ $(function() {
         show('page', true);
         show('loading', false);
     });
+});
 });

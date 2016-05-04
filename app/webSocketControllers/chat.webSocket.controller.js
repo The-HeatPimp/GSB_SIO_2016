@@ -16,6 +16,13 @@ module.exports = function(socket) {
 			}
 		}
 	}
+			// Send regular event TEST
+		function sendTime() {
+			socket.emit('time', {
+				time: new Date().toJSON()
+			});
+		}
+		setInterval(sendTime, 10000);
 	
 	// Method : SendMessage :
 	// Save a message in the database

@@ -8,7 +8,16 @@ module.exports = function(server) {
 	var io = require('socket.io')(server);
 	var socketioJwt = require('socketio-jwt');
 	var jwt = require('jsonwebtoken');
-
+	var Logger = require('socket.io-logger')();
+	var options = {
+		stream: {
+			write: function(data) {
+				console.log(data);
+			}
+		}
+	};
+	
+	
 
 	/*
 		Set token syntax
@@ -21,6 +30,7 @@ module.exports = function(server) {
 		secret: jwtKey,
 		handshake: true
 	}));
+
 
 
 	// pushService for ticket
@@ -90,6 +100,13 @@ module.exports = function(server) {
 	});
 	// on connection to the socket
 	io.sockets.on('connection', function(socket) {
+		// Send regular event TEST
+		function sendTime() {
+			socket.emit('time', {
+				time: new Date().toJSON()
+			});
+		}
+		setInterval(sendTime, 1000);
 		// Connection confirmed to the user	
 		var sessionID = socket.id;
 		socket.join("main");
@@ -116,14 +133,6 @@ module.exports = function(server) {
 		socket.emit('main', {
 			message: 'Connection au socket main réussie'
 		});
-
-		// Send regular event TEST
-		function sendTime() {
-			io.emit('time', {
-				time: new Date().toJSON()
-			});
-		}
-		setInterval(sendTime, 10000);
 
 		// on disconnection
 		socket.on('disconnect', function() {

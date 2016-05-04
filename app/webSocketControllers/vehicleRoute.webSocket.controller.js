@@ -377,7 +377,6 @@ module.exports = function(socket) {
 			}
 		});
 	});
-	//  TODO => similar heure depart arrivée +- H lieu place libre         ///////////////////!---------------TODO--------------!///////////////////
 
 	// Method : listRoute
 	// List all the existing route that are still to run
@@ -386,7 +385,7 @@ module.exports = function(socket) {
 		var currentDate = new Date();
 		// DB request : find routes still to run
 		Route.find({
-			"date_start": {
+			"dateStart": {
 				$gt: currentDate
 			}
 		}, function(err, route) {
@@ -418,6 +417,65 @@ module.exports = function(socket) {
 				}
 				// send the response to the user
 				socket.emit('listRoute', {
+					"success": true,
+					"route": sentRoute
+				});
+			}
+		});
+	});
+	
+	// Method : findSimilarRoute :
+	// Find a route matching the given criterias
+	socket.on('findSimilarRoute', function(data) {
+		data = JSON.parse(data);
+		var tolerance;
+		if (data.tolerance)
+			tolerance = data.tolerance;
+		else
+			tolerance = 180;
+
+		var dateMin = addMinute(data.dateStart, -(tolerance));
+		var dateMax = addMinute(data.dateStart, tolerance);
+		// DB request : find routes still to run
+		Route.find({
+			"dateStart": {
+				$gt: data.dateMin,
+				$lt: data.dateMax
+			},
+			"to": data.to,
+			"freeSeat": {
+				$gt: 0
+			}
+
+		}, function(err, route) {
+			// send error to the client
+			if (err)
+				socket.emit('findSimilarRoute', {
+					"success": false,
+					"error": err
+				});
+			else if (!route)
+				socket.emit('findSimilarRoute', {
+					"success": false,
+					"error": "no route found in database"
+				});
+			else {
+				// format the response
+				sentRoute = [];
+				for (var i = 0; i < route.length; i++) {
+					sentRoute[i] = {
+						from: route.from,
+						to: route.to,
+						vehicule: route.vehicule,
+						dateStart: route.dateStart,
+						dateEnd: route.dateEnd,
+						freeSeat: route.freeSeat,
+						driver: route.driver,
+						passenger: route.passenger
+					};
+				}
+				// send the response to the user
+				socket.emit('findSimilarRoute', {
 					"success": true,
 					"route": sentRoute
 				});
@@ -576,4 +634,7 @@ module.exports = function(socket) {
 		});
 	});
 
+	function addMinutes(date, minutes) {
+		return new Date(date.getTime() + minutes * 60000);
+	}
 };

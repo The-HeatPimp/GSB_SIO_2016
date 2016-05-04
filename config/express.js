@@ -53,9 +53,9 @@ module.exports = function() {
         Console logs
      */
     app.use(morgan('dev', {
-        skip: function(req, res) {
-            return res.statusCode < 400;
-        }
+        // skip: function(req, res) {
+        //     return res.statusCode < 400;
+        // }
     }));
 
 

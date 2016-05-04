@@ -1,9 +1,7 @@
     (function($) {
-        $(document).ready(function() {
-
             var token = cookies.usage.getCookies("auth-token");
             var info = connect.retrieve.info();
-            socket = io.connect('http://' + info.address + '/', {
+            socket = io.connect({
                 'query': 'token=' + token
             });
             socket.on("error", function(error) {
@@ -15,6 +13,4 @@
             socket.on("main", function(message) {
                 console.log(message.message);
             });
-
-        });
     })(jQuery);

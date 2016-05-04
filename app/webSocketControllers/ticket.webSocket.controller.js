@@ -126,12 +126,12 @@ module.exports = function(socket) {
 		}, function(err, ticket) {
 			// send the error to the client
 			if (err)
-				socket.emit('listTicketUser', {
+				socket.emit('listTicketID', {
 					"success": false,
 					"error": err
 				});
 			else if (!ticket)
-				socket.emit('listTicketUser', {
+				socket.emit('listTicketID', {
 					"success": false,
 					"error": "no ticket found in database"
 				});
@@ -144,7 +144,7 @@ module.exports = function(socket) {
 					};
 				}
 				// send the response to the user
-				socket.emit('listTicketUser', {
+				socket.emit('listTicketID', {
 					"success": true,
 					"ticket": sentTicket
 				});
