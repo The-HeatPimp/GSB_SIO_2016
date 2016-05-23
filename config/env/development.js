@@ -10,6 +10,6 @@ var port = 3000;
 
 module.exports = {
 	port: port,
-	db: 'mongodb://localhost/PPE2015',
+	db: 'mongodb://127.0.0.1/PPE2015',
 	jwtKey: 'secret'
 };

@@ -8,6 +8,11 @@ var connectedUsers = top.connectedUsers();
 
 module.exports = function(socket) {
 
+	socket.on('chat-message', function(msg){
+    	console.log('message : ' + msg);
+    	socket.emit('chat-message', msg); // emition a tout le monde !
+    });
+
 	// retrieve the name of the user by matching his sessionID with his username contained in connectedUsers
 	function retrieveName(sessionID) {
 		for (var item = 0; item < connectedUsers.length; item++) {
