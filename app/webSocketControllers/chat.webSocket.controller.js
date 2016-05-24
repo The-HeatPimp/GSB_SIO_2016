@@ -8,10 +8,10 @@ var connectedUsers = top.connectedUsers();
 
 module.exports = function(socket) {
 
-	socket.on('chat-message', function(msg){
-    	console.log('message : ' + msg);
-    	socket.emit('chat-message', msg); // emition a tout le monde !
-    });
+	socket.on('chat-message', function(msg) {
+		console.log('message : ' + msg);
+		socket.emit('chat-message', msg); // emition a tout le monde !
+	});
 
 	// retrieve the name of the user by matching his sessionID with his username contained in connectedUsers
 	function retrieveName(sessionID) {
@@ -21,14 +21,14 @@ module.exports = function(socket) {
 			}
 		}
 	}
-			// Send regular event TEST
-		function sendTime() {
-			socket.emit('time', {
-				time: new Date().toJSON()
-			});
-		}
-		setInterval(sendTime, 10000);
-	
+	// Send regular event TEST
+	function sendTime() {
+		socket.emit('time', {
+			time: new Date().toJSON()
+		});
+	}
+	setInterval(sendTime, 10000);
+
 	// Method : SendMessage :
 	// Save a message in the database
 	socket.on('sendMessage', function(data) {
@@ -78,9 +78,17 @@ module.exports = function(socket) {
 	// Method : requestAllMessages : 
 	// request All the messages 
 	socket.on('requestAllMessages', function(data) {
-		data = JSON.parse(data);
 		// DB request : find all
-		Chat.find({}, function(err, messages) {
+		var name = retrieveName(socket.id);
+		Chat.find({
+			$or: [{
+				receiver: name
+			}, {
+				sender: name
+			}]
+		}).sort({
+			date: -1
+		}).exec(function(err, messages) {
 			// send the response to the client
 			if (err) {
 				socket.emit('requestAllMessages', {
@@ -91,7 +99,7 @@ module.exports = function(socket) {
 			} else {
 				socket.emit('requestAllMessages', {
 					"success": true,
-					"message": message
+					"message": messages
 				});
 			}
 		});

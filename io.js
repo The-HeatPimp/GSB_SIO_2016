@@ -16,8 +16,8 @@ module.exports = function(server) {
 			}
 		}
 	};
-	
-	
+
+
 
 	/*
 		Set token syntax
@@ -99,37 +99,43 @@ module.exports = function(server) {
 		}
 	});
 	// on connection to the socket
-	io.sockets.on('connection', function(socket) {
+	io.on('connection', function(socket) {
 		// Send regular event TEST
-		function sendTime() {
-			socket.emit('time', {
-				time: new Date().toJSON()
-			});
-		}
-		setInterval(sendTime, 1000);
+		// function sendTime() {
+		// 	socket.emit('time', {
+		// 		time: new Date().toJSON()
+		// 	});
+		// }
+		// setInterval(sendTime, 1000);
 		// Connection confirmed to the user	
-		var sessionID = socket.id;
-		socket.join("main");
-		// push service for Chat
-
 		// find the user in the database
-		User.find({
+		User.findOne({
 			username: socket.decoded_token
 		}, function(err, user) {
+			var validated = true;
 			if (err) {
 				console.log(("erreur Admission Admin : " + err).warn);
-			} else if (!user[0])
+			} else if (!user)
 				console.log("error: no user found during admission".warn);
 			else {
+				for (var k = 0; k < connectedUsers.length; k++) {
+					if (connectedUsers[k].id == socket.id) {
+						validated = false;
+					}
+				}
 				// add the user to the connectedUser array
-				connectedUsers.push({
-					user: socket.decoded_token,
-					id: socket.id,
-					accessLevel: user[0].accessLevel
-				});
+				if (validated) {
+					connectedUsers.push({
+						user: user.username,
+						id: socket.id,
+						accessLevel: user.accessLevel
+					});
+					listUserConnected();
+				}
 			}
-			listUserConnected();
+
 		});
+		socket.join("main");
 		socket.emit('main', {
 			message: 'Connection au socket main réussie'
 		});
@@ -137,11 +143,10 @@ module.exports = function(server) {
 		// on disconnection
 		socket.on('disconnect', function() {
 			// remove the user from the connectedUsers array
-			var name = retrieveName(sessionID);
-			var i = connectedUsers.indexOf(name);
+			var i = arrayObjectIndexOf(connectedUsers, socket.decoded_token , "user");
+			
 			connectedUsers.splice(i, 1);
-			listUserConnected();
-			socket.disconnect();
+
 		});
 
 		// Method : ListActiveUser
@@ -151,6 +156,7 @@ module.exports = function(server) {
 				"success": true,
 				"list": connectedUsers
 			});
+			console.log(connectedUsers);
 		});
 
 		// call the websocket controller
@@ -169,7 +175,15 @@ module.exports = function(server) {
 			}
 		}
 		// display the connected User in the consoe
+		function arrayObjectIndexOf(myArray, searchTerm, property) {
+			for (var i = 0, len = myArray.length; i < len; i++) {
+				if (myArray[i][property] === searchTerm) return i;
+			}
+			return -1;
+		}
+
 		function listUserConnected() {
+
 			var stringUser = "";
 			if (connectedUsers.length > 0) {
 				stringUser = ("Connected users : \n ").bold;

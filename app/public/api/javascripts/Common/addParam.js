@@ -7,7 +7,8 @@ $(function() {
 
 	// display the user name in the navigation bar
 
-	$('#userInfo').html("<span class='deco glyphicon glyphicon-off'></span>" + userInfo.username);
+	$('#userInfo').html("<i class='fa fa-power-off' aria-hidden='true'></i>"
+ + userInfo.username);
 
 	// tutorial for the user
 

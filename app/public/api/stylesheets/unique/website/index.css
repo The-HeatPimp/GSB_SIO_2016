@@ -25,6 +25,13 @@
 	list-style-type: none;
 	overflow: hidden;
 }
+.modulable {
+	height:100%;
+}
+.modulable li{
+	height:100% !important;
+}
+
 
 .chat-items li {
 	margin-bottom: 2px;

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        <%=title %>
+    </title>
+
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <form class="form-signin" action="/register" method="post">
+            <h2 class="form-signin-heading text-center">Register</h2>
+
+            <label for="username" class="sr-only">Pseudonyme</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+
+            <label for="email" class="sr-only">E-mail</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="E-mail" required>
+
+            <label for="password" class="sr-only">Mot de passe</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+
+            <label for="firstName" class="sr-only">Prénom</label>
+            <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Prénom" required >
+
+            <label for="lastName" class="sr-only">Nom</label>
+            <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Nom" required >
+
+            <label for="tel" class="sr-only">Nom</label>
+            <input type="text" id="tel" name="tel" class="form-control" placeholder="n°tel" required >
+
+            <label for="street" class="sr-only">Rue</label>
+            <input type="text" id="street" name="address[street]" class="form-control" placeholder="Rue" required>
+
+            <label for="zipCode" class="sr-only">Code postal</label>
+            <input type="text" id="zipCode" name="address[zipCode]" class="form-control" placeholder="Code postal" required>
+
+            <label for="city" class="sr-only">Numéro</label>
+            <input type="text" id="city" name="address[city]" class="form-control" placeholder="Ville" required>
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+          </form>
+    </div>
+</body>
+</html>

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
     <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
     <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
+    <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
     <script>
     var socket;
     </script>
@@ -43,7 +44,7 @@
         </div>
         <div id="navbarCollapse" class="collapse navbar-collapse">
           <ul class="nav navbar-nav dynamic-add">
-            <li ><a href="ticket"data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
+            <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
             <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
             <li>
               <a href="agenda" data-intro='Communiquez avec les autres utilisateurs' data-step="3">Agenda</a>
@@ -65,58 +66,68 @@
         </div>
       </nav>
       <div>
+        <section id="OpenNewConversation">
+          <h4>Liste des utilisateurs</h4>
+          <select id="userSelect">
+            <option value="-1">Selectionner un utilisateur</option>
+          </select>
+          <button class="sendAMessage" data-toggle="modal" data-target="#Modal">Envoyer un message</button>
+          <select id="activeUserSelect">
+            <option value="-1">Selectionner un utilisateur connecté</option>
+          </select>
+          <button class="StartAConv">Commencer une conversation</button>
+        </section>
         <section id="lastMessages">
-          <div class="notification-content jumbotron" data-intro='Aperçu de vos derniers messages' data-step="6" >
-            <h3>Vos derniers messages</h3>
-            <ul class="chat-items">
+          <div class="notification-content jumbotron" data-intro='vos messages' data-step="6" >
+            <h3>Vos messages</h3>
+            <ul class="chat-items modulable">
             </ul>
           </div>
         </section>
-      <section id="OpenNewConversation">
-      <h4>Liste des utilisateurs</h4>
-        <select></select>
-        <button class="sendAMessage" data-toggle="modal" data-target="#Modal">Envoyer un message</button><button class="StartAConv">Commencer une conversation</button>
-      </section>
-      <!--         <section id="chat">
-        <ul id="messages">
-        </ul>
-        <ul id="users">
-        </ul>
-        <input id="m"  autocomplete="off" />
-        <button id="sendM">Envoyer</button>
+        <!--         <section id="chat">
+          <ul id="messages">
+          </ul>
+          <ul id="users">
+          </ul>
+          <input id="m"  autocomplete="off" />
+          <button id="sendM">Envoyer</button>
+          
+        </section> -->
         
-      </section> -->
-      
-      
+        
+      </div>
+      <div id="loading"></div>
+    </body>
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-sm"  id="Modal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Formulaire d'envoi</h4>
+          </div>
+          <div class="modal-footer">
+            <textarea placeholder="Entrer le contenu de votre méssage"></textarea>
+            <button>Envoyer</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="loading"></div>
-  </body>
-  <!-- Modal -->
-  <div class="modal fade bs-example-modal-sm"  id="Modal" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Formulaire d'envoi</h4>
-        </div>
-        <div class="modal-footer">
-          <textarea placeholder="Entrer le contenu de votre méssage"></textarea>
-          <button>Envoyer</button>
-        </div>
-      </div>
-  <!-- Modal -->
-  <div class="modal fade bs-example-modal-sm"  id="myModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Déconnexion</h4>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
-          <button type="submit" id="disconnect" class="btn btn-info"> Confirmer </button>
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-sm"  id="myModal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Déconnexion</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
+            <button type="submit" id="disconnect" class="btn btn-info"> Confirmer </button>
+          </div>
         </div>
       </div>
-    </html>
+    </div>
+  </html>

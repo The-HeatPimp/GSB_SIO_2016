@@ -91,17 +91,19 @@ module.exports = function(socket) {
 
 	// Method : listUser :
 	// List all the user
-	socket.on('listUser', function(data) {
-		data = JSON.parse(data);
+	socket.on('listUser', function() {
+		var validated = true;
+
 		// DB request : Find all the users
 		User.find({}, function(err, users) {
 			// send the error to the client
+			
 			if (err)
 				socket.emit('listUser', {
 					"success": false,
 					"error": err
 				});
-			else if (!user)
+			else if (!users)
 				socket.emit('listUser', {
 					"success": false,
 					"error": "no user found in database"
@@ -110,27 +112,39 @@ module.exports = function(socket) {
 				// format the response
 				var sentUser = [];
 				for (var i = 0; i < users.length; i++) {
-					sentUser[i] = {
-						id: users.id,
-						firstName: users.firstName,
-						lastName: users.lastName,
-						email: users.email,
-						username: users.username,
-						address: [{
-							street: users.address.street,
-							zipCode: users.address.zipCode,
-							city: users.address.city
-						}],
-						tel: users.tel,
-						created_at: users.created_at,
-						updated_at: users.updated_at,
-					};
+					if (users[i].address) {
+						sentUser[i] = {
+							id: users[i].id,
+							firstName: users[i].firstName,
+							lastName: users[i].lastName,
+							email: users[i].email,
+							username: users[i].username,
+							address: [{
+								street: users[i].address.street,
+								zipCode: users[i].address.zipCode,
+								city: users[i].address.city
+							}],
+							tel: users.tel,
+							created_at: users[i].created_at,
+							updated_at: users[i].updated_at,
+						};
+					} else {
+						validated = false;
+
+					}
 				}
 				// send the response to the client
-				socket.emit('listUser', {
-					"success": true,
-					"users": sentUser
-				});
+				if (validated) {
+					socket.emit('listUser', {
+						"success": true,
+						"users": sentUser
+					});
+				} else {
+					socket.emit('listUser', {
+						"success": false,
+						"error": "bad user"
+					});
+				}
 			}
 		});
 	});

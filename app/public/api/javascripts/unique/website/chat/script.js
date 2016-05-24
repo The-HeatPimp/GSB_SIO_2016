@@ -2,136 +2,150 @@
 /*jslint browser: true*/
 (function($) {
   $(document).ready(function() {
-var i;
-
-/*** Fonctions utiles ***/
-
-/**
-* Affichage de la page de login
-*/
+    // var i;
 
 
-/**
- * Scroll vers le bas de page si l'utilisateur n'est pas remonté pour lire d'anciens messages
- */
-function scrollToBottom() {
-  if ($(window).scrollTop() + $(window).height() + 2 * $('#messages li').last().outerHeight() >= $(document).height()) {
-    $('html, body').animate({ scrollTop: $(document).height() }, 0);
-  }
-}
 
-/*** Gestion des événements ***/
+    socket.emit('listUser');
+    socket.on('listUser', function(data) {
+      var i = 0;
+      var j = 0;
+      var userInfo = connect.retrieve.userInfo();
+      if (data.success) {
 
-/**
- * Connexion de l'utilisateur
- * Uniquement si le username n'est pas vide et n'existe pas encore
- */
-$('#testlogin').click(function () {
-  
-  var user = {
-    username : $('#login input').val().trim()
-  };
-  console.log("2"+ user.username);
-  if (user.username.length > 0) { // Si le champ de connexion n'est pas vide
-    socket.emit('user-login', user, function (success) {
-      if (success) {
-        $('div').removeAttr('id'); // Cache formulaire de connexion
-        $('#chat input').removeAttr('disabled');
-        $('#chat input').focus(); // Focus sur le champ du message
+        var userArray = [];
+
+        for (i = 0; i < countObj(data.users); i++) {
+          {
+            userArray[i] = data.users[i].username;
+          }
+        }
+        for (i = 0; i < userArray.length; i++) {
+          if (userArray[i] !== userInfo.username)
+            $('#userSelect').append($('<option>', {
+              value: i,
+              text: userArray[i]
+            }));
+        }
       }
     });
-  }
-});
 
-/**
- * Envoi d'un message
- */
-$('#sendM').click(function () {
-  console.log("run");
-  var message = {
-    text : $('#m').val()
-  };
-  $('#m').val('');
-  if (message.text.trim().length !== 0) { // Gestion message vide
-    socket.emit('chat-message', message);
-  }
-  $('input').focus(); // Focus sur le champ du message
-});
 
-/**
- * Réception d'un message
- */
-socket.on('chat-message', function (message) {
-  $('#messages').append($('<li>').html(message.text));
-  scrollToBottom();
-});
+    socket.emit('listActiveUser');
+    socket.on('listActiveUser', function(data) {
+      var i = 0;
+      var j = 0;
+      var userInfo = connect.retrieve.userInfo();
+      
+      if (data.success) {
 
-/**
- * Réception d'un message de service
- */
-socket.on('service-message', function (message) {
-  $('#messages').append($('<li class="' + message.type + '">').html('<span class="info">information</span> ' + message.text));
-  scrollToBottom();
-});
+        var userArray = [];
 
-/**
- * Connexion d'un nouvel utilisateur
- */
-socket.on('user-login', function (user) {
-  $('#users').append($('<li class="' + user.username + ' new">').html(user.username + '<span class="typing">Est en train d\'écrire !</span>'));
-  setTimeout(function () {
-    $('#users li.new').removeClass('new');
-  }, 1000);
-});
+        for (i = 0; i < countObj(data.list); i++) {
 
-/**
- * Déconnexion d'un utilisateur
- */
-socket.on('user-logout', function (user) {
-  var selector = '#users li.' + user.username;
-  $(selector).remove();
-});
+          userArray[i] = data.list[i].user;
+       
 
-/**
- * Détection saisie utilisateur
- */
-var typingTimer;
-var isTyping = false;
+        }
+        for (j = 0; j < userArray.length; j++) {
+          if (userArray[j] !== userInfo.username)
 
-$('#m').keypress(function () {
-  clearTimeout(typingTimer);
-  if (!isTyping) {
-    socket.emit('start-typing');
-    isTyping = true;
-  }
-});
+            $('#activeUserSelect').append($('<option>', {
+            value: j,
+            text: userArray[j]
+          }));
 
-$('#m').keyup(function () {
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(function () {
-    if (isTyping) {
-      socket.emit('stop-typing');
-      isTyping = false;
-    }
-  }, 500);
-});
-
-/**
-* Affichage de l'ecran de chargement
-*/
+        }
+      }
+    });
 
 
 
-/**
- * Gestion saisie des autres utilisateurs
- */
-socket.on('update-typing', function (typingUsers) {
-  $('#users li span.typing').hide();
-  for (i = 0; i < typingUsers.length; i++) {
-    if(typingUsers[i] !== null){
-    $('#users li.' + typingUsers[i].username + ' span.typing').show();
-  }}
-});
+    socket.emit('requestAllMessages');
+    socket.on('requestAllMessages', function(data) {
+      var i = 0;
+      var j = 0;
+      if (data.success) {
+        var userInfo = connect.retrieve.userInfo();
+        
+        if (data.message.length > 0) {
+          var orderArray = [];
+          var validateCpt = true;
+          var temp = [];
+          for (i = 0; i < data.message.length; i++) {
+            if (data.message[i].sender != userInfo.username) {
+              for (j = 0; j < orderArray.length; j++) {
+                validateCpt = true;
+                if (orderArray[j].key == data.message[i].sender) {
+                  orderArray[j].tab.push(i);
+                  validateCpt = false;
+                }
+              }
+              if (validateCpt) {
+                temp = [i];
+                orderArray.push({
+                  key: data.message[i].sender,
+                  tab: temp
+                });
+              }
+            } else if (data.message[i].receiver != userInfo.username) {
+              for (j = 0; j < orderArray.length; j++) {
+                validateCpt = true;
+                if (orderArray[j].key == data.message[i].receiver) {
+                  orderArray[j].tab.push(i);
+                  validateCpt = false;
+                }
+              }
+              if (validateCpt) {
+                temp = [i];
+                orderArray.push({
+                  key: data.message[i].receiver,
+                  tab: temp
+                });
+              }
+            }
+          }
+       
+          for (i = 0; i < orderArray.length; i++) {
+            if (orderArray[i].tab.length > 1) {
+              $('.chat-items').append("<li><ul><li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[0]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[0]].content + "</span><button type=\"button\" class=\"btn btn-info\" data-toggle=\"collapse\" data-target=\"#message" + i + "\">Voir plus</button></li></ul><ul id='message" + i + "' class='collapse'></ul></li></li>");
+              for (j = 1; j < orderArray[i].tab.length; j++) {
+                $('.chat-items li #message' + i).append("<li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j]].content + "</span></li>");
+              }
+            } else {
+              $('.chat-items').append("<li><ul id='message" + i + "'></ul></li>");
+              for (j = 0; j < orderArray[i].tab.length; j++) {
+                $('.chat-items li #message' + i).append("<li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j]].content + "</span></li>");
+              }
+            }
+          }
+        } else {
+          $('.chat-items').append("<li class='noMessage'>Vous n'avez reçu aucun message</li>");
+        }
+      } else {
+        $('.chat-items').append("<li class='noMessage'>Erreur</li>");
+      }
 
+      /*Fonction de regroupemen*/
+    });
+
+
+
+    countObj = function(obj) {
+      var count = 0;
+      for (var k in obj) {
+        // if the object has this property and it isn't a property
+        // further up the prototype chain
+        if (obj.hasOwnProperty(k)) count++;
+      }
+      return count;
+    };
+
+    formatDate = function(date) {
+      var d = new Date(date);
+      var datestring = ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+        d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+      return datestring;
+    };
   });
 })(jQuery);
