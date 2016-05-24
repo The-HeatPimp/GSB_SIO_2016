@@ -109,8 +109,6 @@ module.exports = function(socket) {
 				$and: [{
 					"free": true
 				}, {
-					"location": data.location
-				}, {
 					"type": data.type
 				}]
 			},

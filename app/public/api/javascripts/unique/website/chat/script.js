@@ -4,7 +4,15 @@
   $(document).ready(function() {
     // var i;
 
-
+    var openedC = false;
+    $('#chatModal').on('shown.bs.modal', function() {
+      openedC = true;
+      console.log(openedC);
+    });
+    $('#chatModal').on('hidden.bs.modal', function() {
+      openedC = false;
+      console.log(openedC);
+    });
 
     socket.emit('listUser');
     socket.on('listUser', function(data) {
@@ -36,7 +44,7 @@
       var i = 0;
       var j = 0;
       var userInfo = connect.retrieve.userInfo();
-      
+
       if (data.success) {
 
         var userArray = [];
@@ -44,7 +52,7 @@
         for (i = 0; i < countObj(data.list); i++) {
 
           userArray[i] = data.list[i].user;
-       
+
 
         }
         for (j = 0; j < userArray.length; j++) {
@@ -67,7 +75,7 @@
       var j = 0;
       if (data.success) {
         var userInfo = connect.retrieve.userInfo();
-        
+
         if (data.message.length > 0) {
           var orderArray = [];
           var validateCpt = true;
@@ -105,7 +113,7 @@
               }
             }
           }
-       
+
           for (i = 0; i < orderArray.length; i++) {
             if (orderArray[i].tab.length > 1) {
               $('.chat-items').append("<li><ul><li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[0]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[0]].content + "</span><button type=\"button\" class=\"btn btn-info\" data-toggle=\"collapse\" data-target=\"#message" + i + "\">Voir plus</button></li></ul><ul id='message" + i + "' class='collapse'></ul></li></li>");
@@ -125,11 +133,57 @@
       } else {
         $('.chat-items').append("<li class='noMessage'>Erreur</li>");
       }
-
       /*Fonction de regroupemen*/
     });
 
+    $('#sendMessageBtn').click(function() {
 
+      if ($('#contentMessage').val() !== "") {
+        var userInfo = connect.retrieve.userInfo();
+        var receiver = $("#userSelect option:selected").text();
+        var content = $('#contentMessage').val();
+        var request = {
+          content: content,
+          receiver: receiver,
+          sender: userInfo.username
+        };
+        socket.emit('sendMessage', JSON.stringify(request));
+      }
+    });
+
+    socket.on('sendMessage', function(data) {
+      if (data.success === true) {
+        $('#confirmSent').text("message Envoyé avec succés");
+      } else {
+        $('#confirmSent').text("erreur, le message n'a pas pu être envoyé");
+      }
+      if(openedC) {
+        
+      }
+    });
+    socket.on('receiveMessage', function(data) {
+      console.log(data);
+      $('.chat-items').prepend("<li><ul><li><span class='chat-from'>" + data.sender + "</span><span class='chat-date'>" + formatDate(data.date) + "</span><span class='chat-text'>" + data.content + "</span></li></ul></li>");
+    });
+
+    $('#sendMessageBtnC').click(function() {
+      var userInfo = connect.retrieve.userInfo();
+      var receiver = $("#activeUserSelect option:selected").text();
+      var content = $('#contentMessageC').val();
+      var request = {
+        content: content,
+        receiver: receiver,
+        sender: userInfo.username
+      };
+      for (var item in request) {
+        if (typeof item === "undefined") {
+          console.log("incomplete request");
+        } else {
+          console.log(request);
+          socket.emit('sendMessage', JSON.stringify(request));
+        }
+      }
+    });
 
     countObj = function(obj) {
       var count = 0;

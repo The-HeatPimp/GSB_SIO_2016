@@ -34,15 +34,16 @@ module.exports = function(server) {
 
 
 	// pushService for ticket
-	myEvent.once('pushTicket', function(data) {
-		io.sockets.emit('pushTicket', data);
+	myEvent.on('pushTicket', function(data) {
+		io.to(socketId).emit('pushTicket', data);
 
 	});
-	myEvent.once('pushChat', function(data) {
+	myEvent.on('pushChat', function(data) {
 		for (var f = 0; f < connectedUsers.length; f++) {
 			if (connectedUsers[f].user == data.receiver) {
 				var clientID = connectedUsers[f].id;
-				clientID.emit('receiveMessage', data);
+				console.log("test" + connectedUsers[f].user);
+				io.to(clientID).emit('receiveMessage', data);
 			}
 		}
 	});

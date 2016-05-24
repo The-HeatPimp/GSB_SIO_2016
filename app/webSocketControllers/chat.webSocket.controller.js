@@ -32,6 +32,7 @@ module.exports = function(socket) {
 	// Method : SendMessage :
 	// Save a message in the database
 	socket.on('sendMessage', function(data) {
+		console.log("erer");
 		name = retrieveName(socket.id);
 		data = JSON.parse(data);
 		// Validation process
