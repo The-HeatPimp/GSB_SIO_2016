@@ -114,7 +114,7 @@ module.exports = function(socket) {
 				for (var i = 0; i < users.length; i++) {
 					if (users[i].address) {
 						sentUser[i] = {
-							_id: users[i]._id,
+							id: users[i].id,
 							firstName: users[i].firstName,
 							lastName: users[i].lastName,
 							email: users[i].email,

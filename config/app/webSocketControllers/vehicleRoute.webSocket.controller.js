@@ -127,7 +127,7 @@ module.exports = function(socket) {
 				else {
 					// format the response
 					var sentVehicle = {
-						_id: vehicle._id,
+						id: vehicle.id,
 						location: vehicle.location,
 						type: vehicle.type,
 						seat: vehicle.seat
@@ -167,7 +167,7 @@ module.exports = function(socket) {
 						var sentVehicle = [];
 						for (var i = 0; i < vehicle.length; i++) {
 							sentVehicle.push({
-								_id: vehicle[i]._id,
+								id: vehicle[i].id,
 								location: vehicle[i].location,
 								type: vehicle[i].type,
 								seat: vehicle[i].seat,
@@ -213,7 +213,7 @@ module.exports = function(socket) {
 				else {
 					// format the reponse
 					var sentVehicle = {
-						_id: vehicle._id,
+						id: vehicle.id,
 						location: vehicle.location,
 						type: vehicle.type,
 						seat: vehicle.seat,
@@ -255,7 +255,7 @@ module.exports = function(socket) {
 					if (vehicle.free) {
 						// Create a new route
 						var route = new Route(data.route);
-						route.vehicle = vehicle._id;
+						route.vehicle = vehicle.id;
 						route.driver = name;
 						route.freeSeat = vehicle.seat - 1;
 						// update the vehicle

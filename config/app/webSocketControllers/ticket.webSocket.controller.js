@@ -98,7 +98,7 @@ module.exports = function(socket) {
 				sentTicket = [];
 				for (var i = 0; i < ticket.length; i++) {
 					sentTicket[i] = {
-						_id: ticket[i]._id,
+						id: ticket[i].id,
 						title: ticket[i].title,
 						typeRequest: ticket[i].typeRequest,
 						importance: ticket[i].importance,
@@ -140,7 +140,7 @@ module.exports = function(socket) {
 				sentTicket = [];
 				for (var i = 0; i < ticket.length; i++) {
 					sentTicket[i] = {
-						_id: ticket[i]._id,
+						id: ticket[i].id,
 					};
 				}
 				// send the response to the user
@@ -223,7 +223,7 @@ module.exports = function(socket) {
 					sentTicket = [];
 					for (var i = 0; i < ticket.length; i++) {
 						sentTicket[i] = {
-							_id: ticket[i]._id,
+							id: ticket[i].id,
 							title: ticket[i].title,
 							typeRequest: ticket[i].typeRequest,
 							importance: ticket[i].importance,
