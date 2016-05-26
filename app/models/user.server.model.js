@@ -60,32 +60,7 @@ UserSchema.pre('save',
     doesn't already exist (return nothing if no parameters)
     propose a suffixe if the username already exists
  */
-UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
-    // catch the request prefix
-    var _this = this;
-    // set possibleUsername 
-    // Can take the value of every username in the DB
-    var possibleUsername = username + (suffix || '');
 
-    _this.findOne({
-            username: possibleUsername
-        },
-        function(err, user) {
-            if (!err) {
-                if (!user) {
-                    // Return the possible Username
-                    callback(possibleUsername);
-                } else {
-                    // Loop the method and search for a possible username with a suffix
-                    return _this.findUniqueUsername(username, (suffix || 0) + 1, callback);
-                }
-            } else {
-                // return nothing if there are missing parameters
-                callback(null);
-            }
-        }
-    );
-};
 
 /*
     Save This schema as the model : User

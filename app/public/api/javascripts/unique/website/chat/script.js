@@ -1,6 +1,8 @@
 /*global io*/
 /*jslint browser: true*/
+
 (function($) {
+
   $(document).ready(function() {
     // var i;
 
@@ -38,6 +40,7 @@
       }
     });
 
+    
 
     socket.emit('listActiveUser');
     socket.on('listActiveUser', function(data) {
@@ -79,18 +82,24 @@
         if (data.message.length > 0) {
           var orderArray = [];
           var validateCpt = true;
-          var temp = [];
+          var temp = {};
           for (i = 0; i < data.message.length; i++) {
             if (data.message[i].sender != userInfo.username) {
               for (j = 0; j < orderArray.length; j++) {
                 validateCpt = true;
                 if (orderArray[j].key == data.message[i].sender) {
-                  orderArray[j].tab.push(i);
+                  orderArray[j].tab.push({
+                    index: i,
+                    type: 0
+                  });
                   validateCpt = false;
                 }
               }
               if (validateCpt) {
-                temp = [i];
+                temp = [{
+                  index: i,
+                  type: 0
+                }];
                 orderArray.push({
                   key: data.message[i].sender,
                   tab: temp
@@ -100,12 +109,18 @@
               for (j = 0; j < orderArray.length; j++) {
                 validateCpt = true;
                 if (orderArray[j].key == data.message[i].receiver) {
-                  orderArray[j].tab.push(i);
+                  orderArray[j].tab.push({
+                    index: i,
+                    type: 1
+                  });
                   validateCpt = false;
                 }
               }
               if (validateCpt) {
-                temp = [i];
+                temp = [{
+                  index: i,
+                  type: 1
+                }];
                 orderArray.push({
                   key: data.message[i].receiver,
                   tab: temp
@@ -113,17 +128,17 @@
               }
             }
           }
-
+          console.log(orderArray);
           for (i = 0; i < orderArray.length; i++) {
             if (orderArray[i].tab.length > 1) {
-              $('.chat-items').append("<li><ul><li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[0]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[0]].content + "</span><button type=\"button\" class=\"btn btn-info\" data-toggle=\"collapse\" data-target=\"#message" + i + "\">Voir plus</button></li></ul><ul id='message" + i + "' class='collapse'></ul></li></li>");
+              $('.chat-items').append("<li><ul><li class='typed" + orderArray[i].tab[0].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[0].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[0].index].content + "</span><button type=\"button\" class=\"btn btn-info\" data-toggle=\"collapse\" data-target=\"#message" + i + "\">Voir plus</button></li></ul><ul id='message" + i + "' class='collapse'></ul></li></li>");
               for (j = 1; j < orderArray[i].tab.length; j++) {
-                $('.chat-items li #message' + i).append("<li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j]].content + "</span></li>");
+                $('.chat-items li #message' + i).append("<li class='typed" + orderArray[i].tab[j].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j].index].content + "</span></li>");
               }
             } else {
               $('.chat-items').append("<li><ul id='message" + i + "'></ul></li>");
               for (j = 0; j < orderArray[i].tab.length; j++) {
-                $('.chat-items li #message' + i).append("<li><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j]].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j]].content + "</span></li>");
+                $('.chat-items li #message' + i).append("<li class='typed" + orderArray[i].tab[j].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j].index].content + "</span></li>");
               }
             }
           }
@@ -152,36 +167,49 @@
     });
 
     socket.on('sendMessage', function(data) {
-      if (data.success === true) {
-        $('#confirmSent').text("message Envoyé avec succés");
-      } else {
-        $('#confirmSent').text("erreur, le message n'a pas pu être envoyé");
-      }
-      if(openedC) {
-        
+      if (!openedC) {
+        if (data.success === true)
+          $('#confirmSent').text("message Envoyé avec succés");
+        else
+          $('#confirmSent').text("erreur, le message n'a pas pu être envoyé");
       }
     });
+
     socket.on('receiveMessage', function(data) {
       console.log(data);
       $('.chat-items').prepend("<li><ul><li><span class='chat-from'>" + data.sender + "</span><span class='chat-date'>" + formatDate(data.date) + "</span><span class='chat-text'>" + data.content + "</span></li></ul></li>");
+      if (openedC) {
+        var curDate = Date.now();
+        $('.chat').append("<li class='right clearfix'><span class='chat-img pull-right'><div id='circleB' class='img-circle'></div></span><div class='chat-body clearfix'> <div class='header'> <strong class='primary-font'>" + data.sender + "</strong> <small class='pull-right text-muted'><span></span> " + formatDate(curDate) + "</small> </div> <p> " + data.content + " </p> </div></li>");
+      }
     });
 
-    $('#sendMessageBtnC').click(function() {
+    $("#btn-input").keyup(function(event) {
+      if (event.keyCode == 13) {
+        $("#btn-chat").click();
+      }
+    });
+
+    $('#btn-chat').click(function() {
       var userInfo = connect.retrieve.userInfo();
       var receiver = $("#activeUserSelect option:selected").text();
-      var content = $('#contentMessageC').val();
+      var content = $('#btn-input').val();
+      $('#btn-input').val('');
       var request = {
         content: content,
         receiver: receiver,
         sender: userInfo.username
       };
+      var valid = true;
       for (var item in request) {
-        if (typeof item === "undefined") {
-          console.log("incomplete request");
-        } else {
-          console.log(request);
-          socket.emit('sendMessage', JSON.stringify(request));
-        }
+        if (typeof item === "undefined")
+          valid = false;
+      }
+      if (valid) {
+        console.log(request);
+        var curDate = Date.now();
+        socket.emit('sendMessage', JSON.stringify(request));
+        $('.chat').append("<li class='left clearfix'><span class='chat-img pull-left'><div id='circleR' class='img-circle'></div></span><div class='chat-body clearfix'> <div class='header'> <strong class='primary-font'>" + request.sender + "</strong> <small class='pull-right text-muted'><span></span> " + formatDate(curDate) + "</small> </div> <p> " + request.content + " </p> </div></li>");
       }
     });
 
@@ -201,5 +229,6 @@
         d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
       return datestring;
     };
+
   });
 })(jQuery);

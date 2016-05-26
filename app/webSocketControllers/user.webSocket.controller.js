@@ -18,6 +18,36 @@ module.exports = function(socket) {
 		}
 	}
 
+
+	socket.on('findUniqueUsername', function(username, suffix) {
+		// catch the request prefix
+		var _this = this;
+		// set possibleUsername 
+		// Can take the value of every username in the DB
+		var possibleUsername = username + (suffix || '');
+
+		_this.findOne({
+				username: possibleUsername
+			},
+			function(err, user) {
+				if (!err) {
+					if (!user) {
+						// Return the possible Username
+						socket.emit('findUniqueUsername', {success: true, username:possibleUsername});
+					} else {
+						// Loop the method and search for a possible username with a suffix
+						return _this.findUniqueUsername(username, (suffix || 0) + 1, callback);
+					}
+				} else {
+					// return nothing if there are missing parameters
+					socket.emit('findUniqueUsername', {
+						success: true,
+						error: "incomplete resquest"
+					});
+				}
+			}
+		);
+	});
 	// Method : CreateUser
 	// Allow an admin to create an user
 	socket.on('createUser', function(data) {
@@ -97,7 +127,7 @@ module.exports = function(socket) {
 		// DB request : Find all the users
 		User.find({}, function(err, users) {
 			// send the error to the client
-			
+
 			if (err)
 				socket.emit('listUser', {
 					"success": false,

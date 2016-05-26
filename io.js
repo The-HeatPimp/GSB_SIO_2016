@@ -34,10 +34,20 @@ module.exports = function(server) {
 
 
 	// pushService for ticket
-	myEvent.on('pushTicket', function(data) {
-		io.to(socketId).emit('pushTicket', data);
+	// myEvent.on('pushTicket', function(data) {
+	// 	io.to(socketId).emit('pushTicket', data);
 
+	// });
+	// 
+	myEvent.on('pushTicket', function(data) {
+		for (var f = 0; f < connectedUsers.length; f++) {
+			if (connectedUsers[f].user == data.creator || connectedUsers[f].accessLevel == 2 || connectedUsers[f].accessLevel == 3) {
+				var clientID = connectedUsers[f].id;
+				io.to(clientID).emit('pushTicket', data);
+			}
+		}
 	});
+
 	myEvent.on('pushChat', function(data) {
 		for (var f = 0; f < connectedUsers.length; f++) {
 			if (connectedUsers[f].user == data.receiver) {
@@ -50,7 +60,7 @@ module.exports = function(server) {
 
 	// Binding route-schedule :
 	// Add an event when a route is saved
-	myEvent.once('pushRoute', function(data) {
+	myEvent.on('pushRoute', function(data) {
 		// Validation process
 		var isValid = true;
 		var savedEvent = {};
@@ -75,19 +85,35 @@ module.exports = function(server) {
 			var event = new Schedule(savedEvent);
 			event.save(function(err) {
 				// send the response to the client
+				var f = 0;
+				var g = 0;
+				var clientID = "";
 				if (err) {
-					socket.emit('createRouteEvent', {
-						"success": false,
-						"error": err
-					});
-
+					for (f = 0; f < connectedUsers.length; f++) {
+						for (g = 0; g < savedEvent.participant.length; g++) {
+							if (connectedUsers[f].user == savedEvent.creator || connectedUsers[f].user == savedEvent.participant[g].username) {
+								clientID = connectedUsers[f].id;
+								io.to(clientID).emit('pushRoute', {
+									"success": true,
+									"event": event
+								});
+							}
+						}
+					}
 				} else {
-					socket.emit('createRouteEvent', {
-						"success": true,
-						"event": event
-					});
-				}
+					for (f = 0; f < connectedUsers.length; f++) {
+						for (g = 0; g < savedEvent.participant.length; g++) {
+							if (connectedUsers[f].user == savedEvent.creator || connectedUsers[f].user == savedEvent.participant[g].username) {
+								clientID = connectedUsers[f].id;
+								io.to(clientID).emit('pushRoute', {
+									"success": true,
+									"event": event
+								});
 
+							}
+						}
+					}
+				}
 			});
 		}
 		// Not legit
@@ -144,8 +170,8 @@ module.exports = function(server) {
 		// on disconnection
 		socket.on('disconnect', function() {
 			// remove the user from the connectedUsers array
-			var i = arrayObjectIndexOf(connectedUsers, socket.decoded_token , "user");
-			
+			var i = arrayObjectIndexOf(connectedUsers, socket.decoded_token, "user");
+
 			connectedUsers.splice(i, 1);
 
 		});

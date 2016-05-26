@@ -20,6 +20,7 @@ module.exports = function(socket) {
 	// Method : createTicket :
 	// Save a ticket to the database
 	socket.on('createTicket', function(data) {
+		console.log("creating ticket");
 		name = retrieveName(socket.id);
 		var isValid = true;
 		data = JSON.parse(data);
@@ -116,7 +117,7 @@ module.exports = function(socket) {
 	});
 
 
-// Method : ListTicketID :
+	// Method : ListTicketID :
 	// List all the ticket ID created by the user
 	socket.on('listTicketID', function() {
 		name = retrieveName(socket.id);
@@ -251,7 +252,7 @@ module.exports = function(socket) {
 		data = JSON.parse(data);
 		// DB request : find a ticket matching the given ID
 		Ticket.findOne({
-				_id: data.id
+				_id: data._id
 			},
 			function(err, ticket) {
 				// send the error to the client
@@ -284,7 +285,7 @@ module.exports = function(socket) {
 			data = JSON.parse(data);
 			// DB request : Find a ticket matching the given ID
 			Ticket.findOne({
-				_id: data.id
+				_id: data._id
 			}, function(err, ticket) {
 				// Send the error to the client
 				if (err)
@@ -331,7 +332,7 @@ module.exports = function(socket) {
 		data = JSON.parse(data);
 		// DB request : Find a ticket matching the given ID
 		Ticket.findOne({
-			_id: data.id
+			_id: data._id
 		}, function(err, ticket) {
 			// Send the response to the client
 			if (err)
@@ -361,8 +362,16 @@ module.exports = function(socket) {
 							"error": err
 						});
 					} else {
+						var index = ticket.message.length-1;
+						ticket = {
+								parent: ticket._id,
+								sender: ticket.message[index].sender,
+								dateMessage: ticket.message[index].dateMessage,
+								text: ticket.message[index].text
+							};
 						socket.emit('answerToTicket', {
-							"success": true
+							"success": true,
+							"comment" : ticket
 						});
 					}
 				});

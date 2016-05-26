@@ -1,6 +1,9 @@
 ////////////////////////////////////////////
 // WEBSOCKET CONTROLLER : VEHICLE & ROUTE //
 ////////////////////////////////////////////
+///
+///
+// TODO PARIS en dur
 
 var Route = require('mongoose').model('Route');
 var Vehicle = require('mongoose').model('Vehicle');
@@ -23,28 +26,30 @@ module.exports = function(socket) {
 	// Allow an admin to add a vehicle
 	socket.on('addVehicle', function(data) {
 		name = retrieveName(socket.id);
+
 		// Check for authorization
+		console.log(AdminHandler.accessLevel(name));
 		if (AdminHandler.accessLevel(name) > 2) {
 			data = JSON.parse(data);
 			// create a new vehicle for each item in the array
-			for (var v = 0; v < data.length; v++) {
-				var vehicle = new Vehicle(data[v]);
-				vehicle.save(function(err) {
-					if (err) {
-						// send the response to the client
-						socket.emit('addVehicle', {
-							"success": false,
-							"error": err
-						});
+			var vehicle = new Vehicle(data);
+			console.log(vehicle);
+			vehicle.save(function(err) {
+				if (err) {
+					// send the response to the client
+					socket.emit('addVehicle', {
+						"success": false,
+						"error": err
+					});
 
-					} else {
-						socket.emit('addVehicle', {
-							"success": true,
-							"vehicle": vehicle
-						});
-					}
-				});
-			}
+				} else {
+					socket.emit('addVehicle', {
+						"success": true,
+						"vehicle": vehicle
+					});
+				}
+			});
+
 		} else
 		// send the authorization error to the client
 			socket.emit('addVehicle', {
@@ -57,15 +62,17 @@ module.exports = function(socket) {
 	// Method : delVehicle : 
 	// Allow an admin to delete a vehicle
 	socket.on('delVehicle', function(data) {
+
 		name = retrieveName(socket.id);
 		// Check for authorization
 		if (AdminHandler.accessLevel(name) > 2) {
 			data = JSON.parse(data);
 			// DB request : Find a vehicle matching the given ID
 			Vehicle.findOne({
-				_id: data.id
+				_id: data._id
 			}, function(err, vehicle) {
 				// Send the error to the client
+
 				if (err)
 					socket.emit('delVehicle', {
 						"success": false,
@@ -88,6 +95,7 @@ module.exports = function(socket) {
 						else
 							socket.emit('delVehicle', {
 								"success": true,
+								"_id": data._id
 							});
 					});
 				}
@@ -102,56 +110,57 @@ module.exports = function(socket) {
 
 	// Method : findFreeVehicle :
 	// Find a random free vehicle matching the given criterias
-	socket.on('findFreeVehicle', function(data) {
-		data = JSON.parse(data);
-		// DB request : find a free vehicle with the given type and location
-		Vehicle.findOne({
-				$and: [{
-					"free": true
-				}, {
-					"type": data.type
-				}]
-			},
-			function(err, vehicle) {
-				// send the error to the client 
-				if (err)
-					socket.emit('findFreeVehicle', {
-						"success": false,
-						"error": err
-					});
-				else if (!vehicle)
-					socket.emit('findFreeVehicle', {
-						"success": false,
-						"error": "no vehicle found in database"
-					});
-				else {
-					// format the response
-					var sentVehicle = {
-						_id: vehicle._id,
-						location: vehicle.location,
-						type: vehicle.type,
-						seat: vehicle.seat
-					};
-					// send the response to the client
-					socket.emit('findFreeVehicle', {
-						"success": true,
-						"vehicle": sentVehicle
-					});
-				}
-			});
-	});
+	// socket.on('findFreeVehicle', function(data) {
+	// 	data = JSON.parse(data);
+	// 	// DB request : find a free vehicle with the given type and location
+	// 	Vehicle.findOne({
+	// 			$and: [{
+	// 				"free": true
+	// 			}, {
+	// 				"type": data.type
+	// 			}]
+	// 		},
+	// 		function(err, vehicle) {
+	// 			// send the error to the client 
+	// 			if (err)
+	// 				socket.emit('findFreeVehicle', {
+	// 					"success": false,
+	// 					"error": err
+	// 				});
+	// 			else if (!vehicle)
+	// 				socket.emit('findFreeVehicle', {
+	// 					"success": false,
+	// 					"error": "no vehicle found in database"
+	// 				});
+	// 			else {
+	// 				// format the response
+	// 				var sentVehicle = {
+	// 					_id: vehicle._id,
+	// 					type: vehicle.type,
+	// 					seat: vehicle.seat
+	// 				};
+	// 				// send the response to the client
+	// 				socket.emit('findFreeVehicle', {
+	// 					"success": true,
+	// 					"vehicle": sentVehicle
+	// 				});
+	// 			}
+	// 		});
+	// });
 
 	// Method : ListVehicle :
 	// List all the vehicles
-	socket.on('listVehicle', function(data) {
+	socket.on('listVehicle', function() {
+
 		name = retrieveName(socket.id);
 		// Check for authorization
 		if (AdminHandler.accessLevel(name) > 2) {
-			data = JSON.parse(data);
+
 			// DB request : find all
 			Vehicle.find({},
 				function(err, vehicle) {
 					// send error to the client
+
 					if (err)
 						socket.emit('listVehicle', {
 							"success": false,
@@ -172,9 +181,11 @@ module.exports = function(socket) {
 								type: vehicle[i].type,
 								seat: vehicle[i].seat,
 								loanStart: vehicle[i].loanStart,
-								loanEnd: vehicle[i].loanEnd
+								loanEnd: vehicle[i].loanEnd,
+								free: vehicle[i].free
 							});
 						}
+
 						// send the response to the client
 						socket.emit('listVehicle', {
 							"success": true,
@@ -196,7 +207,7 @@ module.exports = function(socket) {
 		data = JSON.parse(data);
 		// DB request : Find a vehicle matching the given ID
 		Vehicle.findOne({
-				_id: data.id
+				_id: data._id
 			},
 			function(err, vehicle) {
 				// send the error to the client
@@ -217,7 +228,7 @@ module.exports = function(socket) {
 						location: vehicle.location,
 						type: vehicle.type,
 						seat: vehicle.seat,
-						oanStart: vehicle.loanStart,
+						loanStart: vehicle.loanStart,
 						loanEnd: vehicle.loanEnd
 					};
 					// send the response to th client
@@ -234,68 +245,66 @@ module.exports = function(socket) {
 	socket.on('createRoute', function(data) {
 		name = retrieveName(socket.id);
 		data = JSON.parse(data);
+		track = JSON.parse(data.route);
 		// DB request : Find a vehicle with the given ID
-		Vehicle.find({
-				_id: data.id
+		Vehicle.findOne({
+				$and: [{
+					"free": true
+				}, {
+					"type": data.type
+				}]
 			},
 			function(err, vehicle) {
-				// send error to the client
+				// send the error to the client 
 				if (err)
 					socket.emit('createRoute', {
 						"success": false,
 						"error": err
 					});
-				else if (!vehicle)
+				else if (vehicle.length < 1)
 					socket.emit('createRoute', {
 						"success": false,
 						"error": "no vehicle found in database"
 					});
 				else {
+					console.log(data);
 					// If the vehicle is free
-					if (vehicle.free) {
-						// Create a new route
-						var route = new Route(data.route);
-						route.vehicle = vehicle._id;
-						route.driver = name;
-						route.freeSeat = vehicle.seat - 1;
-						// update the vehicle
-
-						vehicle.free = false;
-						vehicle.loanStart = route.dateStart;
-						vehicle.loanEnd = route.dataEnd;
-						// save the route
-						route.save(function(err) {
-							// send the error to the client
-							if (err)
-								socket.emit('createRoute', {
-									"success": false,
-									"error": err
-								});
-							else {
-								// save the vehicle
-								vehicle.save(function(err) {
-									// send error to the user
-									if (err) {
-										console.log("error : Database integrity compromised".error);
-										socket.emit('createRoute', {
-											"success": false,
-											"error": err
-										});
-									} else
-									// send response to the user
-										socket.emit('createRoute', {
-										"success": true,
-										"route": route
+					// Create a new route
+					var route = new Route(track);
+					route.vehicle = vehicle._id;
+					route.driver = name;
+					route.freeSeat = vehicle.seat - 1;
+					// update the vehicle
+					vehicle.free = false;
+					vehicle.loanStart = route.dateStart;
+					vehicle.loanEnd = route.dataEnd;
+					// save the route
+					route.save(function(err) {
+						// send the error to the client
+						if (err)
+							socket.emit('createRoute', {
+								"success": false,
+								"error": err
+							});
+						else {
+							// save the vehicle
+							vehicle.save(function(err) {
+								// send error to the user
+								if (err) {
+									console.log("error : Database integrity compromised".error);
+									socket.emit('createRoute', {
+										"success": false,
+										"error": err
 									});
+								} else
+								// send response to the user
+									socket.emit('createRoute', {
+									"success": true,
+									"route": route
 								});
-							}
+							});
+						}
 
-						});
-					} else
-					// send error to the user
-						socket.emit('createRoute', {
-						"success": false,
-						"error": "Vehicle is already in a Route"
 					});
 				}
 			});
@@ -421,7 +430,54 @@ module.exports = function(socket) {
 			}
 		});
 	});
-	
+
+
+	// Method : listRoute
+	// List all the existing route that are still to run
+	socket.on('getRoute', function(data) {
+		data = JSON.parse(data);
+		// DB request : find routes still to run
+		Route.findOne({
+			_id: data._id
+		}, function(err, route) {
+			// send error to the client
+			if (err)
+				socket.emit('getRoute', {
+					"success": false,
+					"error": err
+				});
+			else if (!route)
+				socket.emit('getRoute', {
+					"success": false,
+					"error": "no route found in database"
+				});
+			else {
+				Vehicule.findOne({
+					_id: route.vehicle
+				}, function(err, vehicle) {
+					// send error to the client
+					if (err)
+						socket.emit('getRoute', {
+							"success": false,
+							"error": err
+						});
+					else if (!vehicle)
+						socket.emit('getRoute', {
+							"success": false,
+							"error": "no vehicle found in database"
+						});
+					else {
+						route.vehicle = vehicle;
+						// send the response to the user
+						socket.emit('getRoute', {
+							"success": true,
+							"route": route
+						});
+					}
+				});
+			}
+		});
+	});
 	// Method : findSimilarRoute :
 	// Find a route matching the given criterias
 	socket.on('findSimilarRoute', function(data) {
@@ -431,9 +487,11 @@ module.exports = function(socket) {
 			tolerance = data.tolerance;
 		else
 			tolerance = 180;
+		var tempD = new Date(data.dateStart);
 
-		var dateMin = addMinute(data.dateStart, -(tolerance));
-		var dateMax = addMinute(data.dateStart, tolerance);
+
+		var dateMin = addMinutes(tempD, -(tolerance));
+		var dateMax = addMinutes(tempD, tolerance);
 		// DB request : find routes still to run
 		Route.find({
 			"dateStart": {
@@ -447,31 +505,34 @@ module.exports = function(socket) {
 
 		}, function(err, route) {
 			// send error to the client
-			if (err)
+			if (err) {
 				socket.emit('findSimilarRoute', {
 					"success": false,
 					"error": err
 				});
-			else if (!route)
+				console.log(err);
+			} else if (route.length < 1) {
 				socket.emit('findSimilarRoute', {
 					"success": false,
 					"error": "no route found in database"
 				});
-			else {
+				console.log('no route');
+			} else {
 				// format the response
 				sentRoute = [];
 				for (var i = 0; i < route.length; i++) {
 					sentRoute[i] = {
-						from: route.from,
-						to: route.to,
-						vehicule: route.vehicule,
-						dateStart: route.dateStart,
-						dateEnd: route.dateEnd,
-						freeSeat: route.freeSeat,
-						driver: route.driver,
-						passenger: route.passenger
+						from: route[i].from,
+						to: route[i].to,
+						vehicule: route[i].vehicule,
+						dateStart: route[i].dateStart,
+						dateEnd: route[i].dateEnd,
+						freeSeat: route[i].freeSeat,
+						driver: route[i].driver,
+						passenger: route[i].passenger
 					};
 				}
+				console.log(sentRoute);
 				// send the response to the user
 				socket.emit('findSimilarRoute', {
 					"success": true,
@@ -483,9 +544,9 @@ module.exports = function(socket) {
 
 	// Method : listMyRoute
 	// List the route in which the user is involved
-	socket.on('listMyRoute', function(data) {
+	socket.on('listMyRoute', function() {
 		name = retrieveName(socket.id);
-		data = JSON.parse(data);
+
 		// DB request : find the routes in which the user is either driver or passenger
 		Route.find({
 			$or: [{
@@ -529,13 +590,54 @@ module.exports = function(socket) {
 		});
 	});
 
+	// Method : listMyRoute
+	// List the route in which the user is involved
+	socket.on('getAllRoute', function() {
+		name = retrieveName(socket.id);
+		// DB request : find the routes in which the user is either driver or passenger
+		Route.find({
+			$or: [{
+				"driver": name
+			}, {
+				"passenger.username": name
+			}]
+		}, function(err, route) {
+			console.log(route);
+			// send the error to the client
+			if (err)
+				socket.emit('getAllRoute', {
+					"success": false,
+					"error": err
+				});
+			else if (route.length < 1)
+				socket.emit('getAllRoute', {
+					"success": false,
+					"error": "no route found in database"
+				});
+			else {
+				// Format the reponse
+				sentRoute = [];
+				for (var i = 0; i < route.length; i++) {
+					sentRoute[i] = {
+						_id: route[i]._id
+					};
+				}
+				console.log(sentRoute);
+				// send the response to the user
+				socket.emit('getAllRoute', {
+					"success": true,
+					"route": sentRoute
+				});
+			}
+		});
+	});
 	// Method : takeRoute:
 	// Add the user as passenger in a given route
 	socket.on('takeRoute', function(data) {
 		data = JSON.parse(data);
 		// DB request : find a route with a given ID
 		Route.find({
-			_id: data.id
+			_id: data._id
 		}, function(err, route) {
 			// send the error to the client
 			if (err)
@@ -583,7 +685,7 @@ module.exports = function(socket) {
 		data = JSON.parse(data);
 		// DB request : find a route by ID
 		Route.findOne({
-			_id: data.id
+			_id: data._id
 		}, function(err, route) {
 			// Send error to the client
 			if (err)
@@ -632,7 +734,10 @@ module.exports = function(socket) {
 		});
 	});
 
+
 	function addMinutes(date, minutes) {
-		return new Date(date.getTime() + minutes * 60000);
+		var response = date.getTime() + minutes * 60000;
+
+		return new Date(response);
 	}
 };

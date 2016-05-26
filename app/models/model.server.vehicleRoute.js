@@ -5,15 +5,28 @@
 
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
+	var myEvent = require('../controllers/event');
 
 // schema definition
 var VehicleSchema = new Schema({
 	type: String,
 	seat: Number,
-	Location: String,
-	loanStart: Date,
-	loanEnd: Date,
-	free: Boolean
+	Location: {
+		type: String,
+		default: "Paris"
+	},
+	loanStart:{
+		type: Date,
+		default: 0
+	},
+	loanEnd: {
+		type: Date,
+		default: 0
+	},
+	free: {
+		type: Boolean,
+		default: true
+	}
 });
 
 ///////////////////
@@ -22,9 +35,13 @@ var VehicleSchema = new Schema({
 
 // Schema definition
 var RouteSchema = new Schema({
+	from: {
+		type: String,
+		default: "Paris"
+	},
 	to: String,
 	vehicle: {
-		type: Number,
+		type: Schema.Types.ObjectId,
 		ref: 'Vehicle'
 	},
 	dateStart: Date,
@@ -39,17 +56,17 @@ var RouteSchema = new Schema({
 
 // Push the document to the main web-socket controller
 RouteSchema.post('save',
-  function(RouteShema) {
-    myEvent.emit("pushRoute", {
-      id: this._id,
-      to: this.to,
-      vehicule: this.vehicule,
-      dateStart: this.dateStart,
-      created_at: this.created_at,
-      driver: this.driver,
-      passenger: this.passenger
-    });
-  });
+	function(RouteShema) {
+		myEvent.emit("pushRoute", {
+			id: this._id,
+			to: this.to,
+			vehicle: this.vehicle,
+			dateStart: this.dateStart,
+			created_at: this.created_at,
+			driver: this.driver,
+			passenger: this.passenger
+		});
+	});
 
 // Save the models
 mongoose.model('Route', RouteSchema);

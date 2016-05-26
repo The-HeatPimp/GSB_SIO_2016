@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="stylesheets/assets/bootstrap.min.css"/>
     <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
     <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/chat/index.css"/>
     <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
     <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
     <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
@@ -66,16 +67,32 @@
         </div>
       </nav>
       <div>
+      <script>
+        function selectChangeA(select) {
+          console.log($('#activeUserSelect :selected').val());
+          if($('#activeUserSelect :selected').val() != "") {
+            $('.StartAConv').css("display", "inline-block");
+          } else
+           $('.StartAConv').css("display", "none");
+        }
+
+        function selectChangeU(select) {
+           if($('#userSelect :selected').val() != "") {
+            $('.sendAMessage').css("display", "inline-block");
+          } else
+           $('.sendAMessage').css("display", "none");
+        }
+      </script>
         <section id="OpenNewConversation">
           <h4>Liste des utilisateurs</h4>
-          <select id="userSelect">
-            <option value="-1">Selectionner un utilisateur</option>
+          <select id="userSelect" onchange="javascript:selectChangeU(this);">
+            <option value="">Selectionner un utilisateur</option>
           </select>
-          <button class="sendAMessage" data-toggle="modal" data-target="#Modal">Envoyer un message</button>
-          <select id="activeUserSelect">
-            <option value="-1">Selectionner un utilisateur connecté</option>
+          <button class="sendAMessage" data-toggle="modal" style="display: none" data-target="#Modal ">Envoyer un message</button>
+          <select id="activeUserSelect" onchange="javascript:selectChangeA(this);">
+            <option value="" selected>Selectionner un utilisateur connecté</option>
           </select>
-          <button class="StartAConv" data-toggle="modal" data-target="#chatModal">Commencer une conversation</button>
+          <button class="StartAConv" data-toggle="modal" style="display: none" data-target="#chatModal">Commencer une conversation</button>
         </section>
         <section id="lastMessages">
           <div class="notification-content jumbotron" data-intro='vos messages' data-step="6" >
@@ -131,25 +148,56 @@
         </div>
       </div>
     </div>
-    <div class="modal fade bs-example-modal-sm"  id="chatModal" role="dialog">
-      <div class="modal-dialog modal-sm">
+    <!--     <div class="modal fade bs-example-modal-sm"  id="chatModal" role="dialog">
+      <div class="modal-dialog modal-sm"> -->
         <!-- Modal content-->
-        <div class="modal-content">
+        <!--  <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Méssagerie instantanée</h4>
           </div>
           <div class="modal-footer">
             <section id="chat">
-              <ul id="messages">
+              <ul id="messagesC">
               </ul><ul id="users">
-            </ul>  
-              <input id="contentMessageC"  autocomplete="off"  placeholder="Entrer le contenu de votre méssage"/>
+            </ul>
+            <input id="contentMessageC"  autocomplete="off"  placeholder="Entrer le contenu de votre méssage"/>
           </section>
           <button id="sendMessageBtnC">Envoyer</button>
           <p id="confirmSentC"></p>
         </div>
       </div>
     </div>
+  </div> -->
+  <div class="modal fade bs-example-modal-md"  id="chatModal" role="dialog">
+    <div class="modal-dialog modal-md">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <span></span> Chat
+                <div class="btn-group pull-right">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <ul class="chat">        
+        </ul>
+      </div>
+      <div class="panel-footer">
+        <div class="input-group">
+          <input id="btn-input" class="form-control input-sm" placeholder="Type your message here..." autocomplete="off" type="text">
+          <span class="input-group-btn">
+            <button class="btn btn-warning btn-sm" id="btn-chat">
+            Send</button>
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+</div>
+</div>
+</div>
 </html>
