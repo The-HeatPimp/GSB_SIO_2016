@@ -15,11 +15,9 @@ var UserSchema = new Schema({
     firstName: String,
     lastName: String,
     email: String,
-    sessionId: String,
     username: {
         type: String,
-        trim: true,
-        unique: true
+        trim: true
     },
     address: [{
         street: String,
@@ -37,6 +35,7 @@ var UserSchema = new Schema({
 
 UserSchema.pre('save',
     function(next) {
+        console.log("hash");
         // Hash the password before sending it to the database
         if (this.password) {
             var md5 = crypto.createHash('md5');

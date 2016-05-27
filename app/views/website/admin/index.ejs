@@ -94,40 +94,54 @@
           </section>
           <section id="userManagement" class="col-lg-6 col-md-12 row">
             <h4>Gestion des utilisateurs</h4>
-            <div class="col-md-6 col-xs-12">
+            <div class="AddU col-md-6 col-xs-12">
               
               <p>Ajouter un utilisateur</p>
-              Nom<input id="addUName" type="text"/>
-              Prenom<input id="addUSurname" type="text" />
-              email<input id="addUMail" type="text" />
-              username<input id="addUUsername" type="text" />
+               <label>Nom</label><input id="addUName" type="text" autocomplete="off"/>
+               <label>Prenom</label><input id="addUSurname" type="text" autocomplete="off"/>
+               <label>email</label><input id="addUMail" type="text" autocomplete="off"/>
+               <label>username</label><input id="addUUsername" type="text" autocomplete="off" />
               <button id="addUBtnCheck">Valider l'utilisateur</button>
-              rue<input id="addUStreet" type="text" />
-              code postale<input id="addUZipCode"  type="text" />
-              ville<input id="addUCity" type="text" />
-              telephone<input id="addUPhone" type="text" />
-              mot de passe<input id="addUPass" type="text" />
-              <button id="addUBtnAdd">Ajouter l'utilisateurs</button>
+              <p id="addUPAdd"></p>
+               <label>rue</label><input id="addUStreet" type="text" autocomplete="off"/>
+               <label>code postale</label><input id="addUZipCode"  type="text" autocomplete="off"/>
+               <label>ville</label><input id="addUCity" type="text" autocomplete="off"/>
+               <label>telephone</label><input id="addUPhone" type="text" autocomplete="off"/>
+               <label>mot de passe</label><input id="addUPass" type="text" autocomplete="off"/>
+               <label>niveau d'acces</label>
+              <select id="AccessSelect">
+                <option value="1" selected>Utilisateur</option>
+                <option value="2" selected>Support</option>
+                <option value="3" selected>Administrateur</option>
+              </select>
+              <button id="addUBtnAdd" style="display: none">Ajouter l'utilisateurs</button>
+              <p id="addUConfAdd"></p>
             </div>
             <div class="col-md-6 col-xs-12">
               <p>Supprimer un utilisateur</p>
-              <select id="VSelect">
+              <select id="USelect" onchange="selectChangeU()">
+                <option value="" selected>Selectionner un Utilisateur</option>
               </select>
-              <button>Supprimer</button>
+              <button id="delUser" style="display: none">Supprimer</button>
+              <p id="delURes"></p>
             </div>
           </section>
         </div>
       </div>
     </div>
     <div id="loading"></div>
-    <script>   
-
-     function selectChangeV() {
-
-    if($('#VSelect option:selected').val() !== "") 
+    <script>
+    function selectChangeV() {
+    if($('#VSelect option:selected').val() !== "")
     $('#delVehicle').css("display", "block");
-     else
+    else
     $('#delVehicle').css("display", "none");
+    }
+    function selectChangeU() {
+    if($('#USelect option:selected').val() !== "")
+    $('#delUser').css("display", "block");
+    else
+    $('#delUser').css("display", "none");
     }
     </script>
   </body>

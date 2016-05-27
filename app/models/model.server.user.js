@@ -5,17 +5,19 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto');
-	validator = require('validator');
-	
+validator = require('validator');
+
 // Schema definition
 var UserSchema = new Schema({
 	firstName: String,
 	lastName: String,
-	accessLevel: Number,
+	accessLevel: {
+		type: Number,
+		default: 1
+	},
 	email: String,
 	username: {
 		type: String,
-		unique: true,
 		trim: true
 	},
 	address: [{

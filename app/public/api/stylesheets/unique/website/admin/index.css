@@ -6,3 +6,10 @@ body section {
 	display:block;
 	margin-bottom:30px;
 }
+
+select {
+	max-width: 230px;
+}
+label {
+	display: block;
+}
