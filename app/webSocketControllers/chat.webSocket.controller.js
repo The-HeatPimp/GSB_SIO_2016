@@ -32,7 +32,6 @@ module.exports = function(socket) {
 	// Method : SendMessage :
 	// Save a message in the database
 	socket.on('sendMessage', function(data) {
-		console.log("erer");
 		name = retrieveName(socket.id);
 		data = JSON.parse(data);
 		// Validation process
@@ -51,7 +50,7 @@ module.exports = function(socket) {
 		if (isValid) {
 			// save the object
 			var message = new Chat(data);
-			message.save(function(err) {
+			message.save(function(err,msg) {
 				// send the response to the client
 				if (err) {
 					socket.emit('sendMessage', {
@@ -60,9 +59,10 @@ module.exports = function(socket) {
 					});
 
 				} else {
+					
 					socket.emit('sendMessage', {
 						"success": true,
-						"message": message
+						"message": msg
 					});
 				}
 			});
@@ -136,6 +136,35 @@ module.exports = function(socket) {
 				socket.emit('requestLastMessage', {
 					"success": true,
 					"message": response
+				});
+			}
+		});
+	});
+
+	socket.on('deleteMessage', function(data) {
+		name = retrieveName(socket.id);
+		data = JSON.parse(data);
+		// DB request : find all messages sent to the user, order by date DESC
+		Chat.findOneAndRemove({
+			_id: data._id
+		}, function(err,deld) {
+			console.log(deld);
+			// send error to the client
+			if (err) {
+				socket.emit('deleteMessage', {
+					"success": false,
+					"error": err
+				});
+			} else if(!deld) {
+				socket.emit('deleteMessage', {
+					"success": false,
+					"error": "no message to delete"
+				});
+			} else {
+
+				socket.emit('deleteMessage', {
+					"success": true,
+					"_id": data._id
 				});
 			}
 		});

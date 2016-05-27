@@ -9,11 +9,13 @@
     <link rel="stylesheet" href="stylesheets/assets/bootstrap.min.css"/>
     <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
     <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/ticket/index.css"/>
     <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
     <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
     <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
     <script>
     var socket;
+    var selectedTicket;
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -26,7 +28,7 @@
     <script src="javascripts/common/disconnect.js"></script>
     <script src="javascripts/common/hideByAccessLevel.js"></script>
     <script src="javascripts/common/addParam.js"></script>
-    <script src="javascripts/unique/website/chat/script.js"></script>
+    <script src="javascripts/unique/website/ticket/script.js"></script>
   </head>
   
   <body>
@@ -64,23 +66,44 @@
           </ul>
         </div>
       </nav>
-      <p>ticket</p>
-      <p class="toAppend"></p>
-      <script>
-      
-      $(document).ready(function() {
-      socket.emit('time');
-      socket.on('time', function(data) {
-      if (data.time) {
-      $('.toAppend').append((JSON.stringify(data.time) + "<br/>"));
-      
-      } else {
-      $('.toAppend').append("no ticket found \n");
-      
-      }
-      });
-      });
-      </script>
+      <div class="row">
+      <div id="pti" class="col-lg-offset-4 col-lg-4 col-ms-4 col-sm-4 col-xs-4">
+        <label id="type">Type d'incident</label>
+        <select id="choix" name="select" class="form-control">
+          <option value=""> Selectionnez le type de problème </option>
+          <option value="Logiciciel">Logiciel</option>
+          <option value="Materiel">Materiel</option>
+          <option value="Autres">Autres</option>
+        </select>
+        </br>
+        <label id="titre">Titre du ticket</label>
+        <input autocomplete="off" type="text" class="form-control" name="nom_ticket" id="tt" placeholder="Titre de votre ticket"/>
+        </br>
+        <label class="com">Commentaire</label>
+        <input autocomplete="off" type="text" class="form-control" id="description" name="description_probleme" placeholder="Decrivez votre probleme"/ >
+        </br>
+        <label class="importance"> Degrés d'importance de votre ticket </label>
+        <select class="select_etat_ticket form-control" name="importance">
+          <option value=""> Selectionnez le degrés d'importance du ticket </option>
+          <option value="1"> Peu important </option>
+          <option value="2"> Assez important </option>
+          <option value="3"> Très important </option>
+        </select>
+        <br>
+        <div class="submit text-center">
+          <button type="button" id="boutn" class="btn btn-info" disabled="">Envoyer le ticket</button>
+        </div>
+      </div>
+      </div>
+    
+    <section id="lastTickets">
+      <div class="notification-content jumbotron" data-intro='vos ticket' data-step="6" >
+        <h3>Vos tickets</h3>
+        <ul class="chat-items modulable" id="listTicket">
+        </ul>
+      </div>
+    </section>
+    
     </div>
     <div id="loading"></div>
   </body>
@@ -96,6 +119,24 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
           <button type="submit" id="disconnect" class="btn btn-info"> Confirmer </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade bs-example-modal-sm"  id="addTModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <label id="TextA">Titre du ticket</label>
+        </div>
+        <div class="modal-footer">
+          
+        <textarea autocomplete="off" type="text" class="form-control" name="nom_ticket" id="textA" placeholder="Contenu du message"></textarea>
+        <button type="button" class="btn btn-default" id="sendTextA">Envoyer</button>
+        <p id="confSend"></p>
         </div>
       </div>
     </div>

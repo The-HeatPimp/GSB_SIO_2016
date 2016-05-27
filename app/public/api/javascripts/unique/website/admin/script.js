@@ -164,9 +164,9 @@
 					valid = false;
 			});
 
-				if ($("#AccessSelect option:selected").val() === "")
-					valid = false;
-			
+			if ($("#AccessSelect option:selected").val() === "")
+				valid = false;
+
 			setValid(valid, 2);
 		});
 

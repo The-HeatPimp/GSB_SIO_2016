@@ -58,13 +58,19 @@ var RouteSchema = new Schema({
 RouteSchema.post('save',
 	function(RouteShema) {
 		myEvent.emit("pushRoute", {
-			id: this._id,
+			_id: this._id,
 			to: this.to,
 			vehicle: this.vehicle,
 			dateStart: this.dateStart,
 			created_at: this.created_at,
 			driver: this.driver,
 			passenger: this.passenger
+		});
+	});
+RouteSchema.pre('remove',
+	function(RouteShema) {
+		myEvent.emit("pushDelRoute", {
+			_id: this._id
 		});
 	});
 

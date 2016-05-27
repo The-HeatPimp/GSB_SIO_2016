@@ -55,7 +55,7 @@ TicketSchema.pre('save',
 TicketSchema.post('save',
   function(TicketSchema) {
     myEvent.emit("pushTicket", {
-      id: this._id,
+      _id: this._id,
       title: this.title,
       typeRequest: this.typeRequest,
       priority: this.priority,

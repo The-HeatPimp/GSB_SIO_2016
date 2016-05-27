@@ -83,34 +83,26 @@ module.exports = function(socket) {
 		Ticket.find({
 			"creator": name
 		}, function(err, ticket) {
+
 			// send the error to the client
-			if (err)
+			if (err) {
+				console.log('err');
 				socket.emit('listTicketUser', {
 					"success": false,
 					"error": err
 				});
-			else if (!ticket)
+			} else if (ticket.length < 1) {
+				console.log('none');
 				socket.emit('listTicketUser', {
 					"success": false,
 					"error": "no ticket found in database"
 				});
-			else {
-				// format the response
-				sentTicket = [];
-				for (var i = 0; i < ticket.length; i++) {
-					sentTicket[i] = {
-						_id: ticket[i]._id,
-						title: ticket[i].title,
-						typeRequest: ticket[i].typeRequest,
-						importance: ticket[i].importance,
-						created_at: ticket[i].created_at,
-						closed: ticket[i].closed
-					};
-				}
+			} else {
+				console.log('success');
 				// send the response to the user
 				socket.emit('listTicketUser', {
 					"success": true,
-					"ticket": sentTicket
+					"ticket": ticket
 				});
 			}
 		});
@@ -362,16 +354,16 @@ module.exports = function(socket) {
 							"error": err
 						});
 					} else {
-						var index = ticket.message.length-1;
+						var index = ticket.message.length - 1;
 						ticket = {
-								parent: ticket._id,
-								sender: ticket.message[index].sender,
-								dateMessage: ticket.message[index].dateMessage,
-								text: ticket.message[index].text
-							};
+							parent: ticket._id,
+							sender: ticket.message[index].sender,
+							dateMessage: ticket.message[index].dateMessage,
+							text: ticket.message[index].text
+						};
 						socket.emit('answerToTicket', {
 							"success": true,
-							"comment" : ticket
+							"comment": ticket
 						});
 					}
 				});

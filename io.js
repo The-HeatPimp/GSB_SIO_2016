@@ -52,7 +52,6 @@ module.exports = function(server) {
 		for (var f = 0; f < connectedUsers.length; f++) {
 			if (connectedUsers[f].user == data.receiver) {
 				var clientID = connectedUsers[f].id;
-				console.log("test" + connectedUsers[f].user);
 				io.to(clientID).emit('receiveMessage', data);
 			}
 		}
@@ -64,25 +63,38 @@ module.exports = function(server) {
 		// Validation process
 		var isValid = true;
 		var savedEvent = {};
-		savedEvent = {
-			participant: data.passenger,
-			date_start: data.dateStart,
-			date_end: data.dateEnd,
-			title: "Location d'un véhicule",
-			description: "trajet vers" + data.to,
-			creator: data.driver,
-			location: data.to
-		};
-		participant.push(data.driver);
-		for (var prop in savedEvent) {
-			if (!prop) {
-				isValid = false;
+		var event;
+		if (!data.passenger)
+			data.passenger = [];
+		Schedule.findOne({
+			idRoute: data._id
+		}, function(err, Eevent) {
+			if (Eevent) {
+				Eevent.participant = data.passenger;
+				event = new Schedule(Eevent);
+			} else {
+				savedEvent = {
+					participant: data.passenger,
+					date_start: data.dateStart,
+					date_end: data.dateEnd,
+					title: "Location d'un véhicule",
+					description: "trajet vers" + data.to,
+					creator: data.driver,
+					location: data.to,
+					idRoute: data._id
+				};
+				for (var prop in savedEvent) {
+					if (!prop) {
+						isValid = false;
+					}
+				}
+				if (isValid)
+					event = new Schedule(savedEvent);
 			}
-		}
+		});
 		// Legit
 		if (isValid) {
 			// save the event
-			var event = new Schedule(savedEvent);
 			event.save(function(err) {
 				// send the response to the client
 				var f = 0;
@@ -124,6 +136,24 @@ module.exports = function(server) {
 				"error": "incomplete request"
 			});
 		}
+	});
+
+	myEvent.on('pushDelRoute', function(data) {
+		Schedule.find({
+			idRoute: data._id
+		}, function(err, event) {
+			Schedule.remove({
+				_id: {
+					$in: event
+				}
+			}, function(err) {
+				if (err)
+					console.log(err);
+				else
+					console.log("removed event nb= " + event.length);
+			}); // and so on
+		});
+
 	});
 	// on connection to the socket
 	io.on('connection', function(socket) {
@@ -183,7 +213,6 @@ module.exports = function(server) {
 				"success": true,
 				"list": connectedUsers
 			});
-			console.log(connectedUsers);
 		});
 
 		// call the websocket controller

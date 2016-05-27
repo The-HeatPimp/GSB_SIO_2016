@@ -19,7 +19,8 @@ var ScheduleSchema = new Schema({
   title: String,
   description: String,
   creator: String,
-  location: String
+  location: String,
+  idRoute: String
 });
 
 // save the model

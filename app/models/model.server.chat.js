@@ -27,7 +27,7 @@ ChatSchema.pre('save',
 ChatSchema.post('save',
 	function(ChatSchema) {
 		myEvent.emit("pushChat", {
-			id: this._id,
+			_id: this._id,
 			content: this.content,
 			date: this.date,
 			sender: this.sender,
