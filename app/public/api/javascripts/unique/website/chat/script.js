@@ -134,12 +134,12 @@
             if (orderArray[i].tab.length > 1) {
               $('.chat-items').append("<li><ul><li value='" + data.message[orderArray[i].tab[0].index]._id + "'class='typed" + orderArray[i].tab[0].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[0].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[0].index].content + "</span><button type=\"button\" class=\"btn btn-info\" data-toggle=\"collapse\" data-target=\"#message" + i + "\">Voir plus</button><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button></li></ul><ul id='message" + i + "' class='collapse'></ul></li></li>");
               for (j = 1; j < orderArray[i].tab.length; j++) {
-                $('.chat-items li #message' + i).append("<li  value='" + data.message[orderArray[i].tab[j].index]._id + "' class='typed" + orderArray[i].tab[j].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j].index].content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button</li>");
+                $('.chat-items li #message' + i).append("<li  value='" + data.message[orderArray[i].tab[j].index]._id + "' class='typed" + orderArray[i].tab[j].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j].index].content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button></li>");
               }
             } else {
               $('.chat-items').append("<li><ul id='message" + i + "'></ul></li>");
               for (j = 0; j < orderArray[i].tab.length; j++) {
-                $('.chat-items li #message' + i).append("<li  value='" + data.message[orderArray[i].tab[j].index]._id + "' class='typed" + orderArray[i].tab[j].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j].index].content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button</li>");
+                $('.chat-items li #message' + i).append("<li  value='" + data.message[orderArray[i].tab[j].index]._id + "' class='typed" + orderArray[i].tab[j].type + "'><span class='chat-from'>" + orderArray[i].key + "</span><span class='chat-date'>" + formatDate(data.message[orderArray[i].tab[j].index].date) + "</span><span class='chat-text'>" + data.message[orderArray[i].tab[j].index].content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button></li>");
               }
             }
           }
@@ -172,7 +172,7 @@
         console.log(res);
         if (res.success === true) {
           $('#confirmSent').text("message Envoyé avec succés");
-          $('.chat-items').prepend("<li value='" + res.message._id + "' class=\"typed\" ><ul><li><span class='chat-from'>" + res.message.sender + "</span><span class='chat-date'>" + formatDate(res.message.date) + "</span><span class='chat-text'>" + res.message.content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" res.message-toggle=\"modal\" res.message-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button</li></ul></li>");
+          $('.chat-items').prepend("<li value='" + res.message._id + "' class=\"typed\" ><ul><li><span class='chat-from'>" + res.message.sender + "</span><span class='chat-date'>" + formatDate(res.message.date) + "</span><span class='chat-text'>" + res.message.content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" res.message-toggle=\"modal\" res.message-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button></li></ul></li>");
         } else
           $('#confirmSent').text("erreur, le message n'a pas pu être envoyé");
       }
@@ -180,7 +180,7 @@
 
     socket.on('receiveMessage', function(data) {
       console.log(data);
-      $('.chat-items').prepend("<li value='" + data._id + "' class=\"typed\" ><ul><li><span class='chat-from'>" + data.sender + "</span><span class='chat-date'>" + formatDate(data.date) + "</span><span class='chat-text'>" + data.content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button</li></ul></li>");
+      $('.chat-items').prepend("<li value='" + data._id + "' class=\"typed\" ><ul><li><span class='chat-from'>" + data.sender + "</span><span class='chat-date'>" + formatDate(data.date) + "</span><span class='chat-text'>" + data.content + "</span><button type=\"button\" class=\"btn btn-info delMessage\" data-toggle=\"modal\" data-target=\"#delModal\"><i class=\"fa fa-times\" aria-hidden=\"true\"></i></button></li></ul></li>");
       if (openedC) {
         var curDate = Date.now();
         $('.chat').append("<li class='right clearfix'><span class='chat-img pull-right'><div id='circleB' class='img-circle'></div></span><div class='chat-body clearfix'> <div class='header'> <strong class='primary-font'>" + data.sender + "</strong> <small class='pull-right text-muted'><span></span> " + formatDate(curDate) + "</small> </div> <p> " + data.content + " </p> </div></li>");

@@ -178,8 +178,7 @@ module.exports = function(socket) {
 							title: ticket[i].title,
 							message: ticket[i].message[ticket[i].message.length - 1]
 						};
-					} else
-						++data.nb;
+					} else ++data.nb;
 				}
 				// send the response to the client
 				socket.emit('requestLastTicket', {
@@ -198,7 +197,7 @@ module.exports = function(socket) {
 		if (AdminHandler.accessLevel(name) > 1) {
 			// DB request : find all the tickets that aren't closed
 			Ticket.find({
-				"closed": false
+				
 			}, function(err, ticket) {
 				// send the error to the client
 				if (err)
@@ -213,20 +212,10 @@ module.exports = function(socket) {
 					});
 				else {
 					// format the response
-					sentTicket = [];
-					for (var i = 0; i < ticket.length; i++) {
-						sentTicket[i] = {
-							_id: ticket[i]._id,
-							title: ticket[i].title,
-							typeRequest: ticket[i].typeRequest,
-							importance: ticket[i].importance,
-							created_at: ticket[i].created_at,
-						};
-					}
 					// send the response to the client
 					socket.emit('listTicketAdmin', {
 						"success": true,
-						"ticket": sentTicket
+						"ticket": ticket
 					});
 				}
 			});
@@ -302,7 +291,8 @@ module.exports = function(socket) {
 							});
 						} else {
 							socket.emit('closeTicket', {
-								"success": true
+								"success": true,
+								"_id": ticket._id
 							});
 						}
 					});

@@ -5,7 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title><%= title %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+        
+    <link rel="stylesheet" href="stylesheets/common/commonPages.css"/>
+    <script src="javascripts/common/loadingScreen.js"></script>
     <link rel="stylesheet" href="stylesheets/assets/bootstrap.min.css"/>
     <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
     <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
@@ -13,6 +15,7 @@
     <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
     <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
     <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
+
     <script>
     var socket;
     </script>
@@ -20,7 +23,6 @@
     
     <script src="javascripts/assets/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="javascripts/common/loadingScreen.js"></script>
     <script src="javascripts/assets/introjs/intro.js"></script>
     <script src="javascripts/common/cookies.js"></script>
     <script src="javascripts/common/connect.js"></script>
@@ -33,7 +35,7 @@
   
   <body>
     <div id="page">
-      <nav role="navigation" class="navbar navbar-inverse">
+     <nav role="navigation" class="navbar navbar-inverse">
         <div class="navbar-header">
           <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
           <span class="sr-only">Toggle navigation</span>
@@ -66,23 +68,7 @@
           </ul>
         </div>
       </nav>
-      <div>
-      <script>
-        function selectChangeA(select) {
-          console.log($('#activeUserSelect :selected').val());
-          if($('#activeUserSelect :selected').val() != "") {
-            $('.StartAConv').css("display", "inline-block");
-          } else
-           $('.StartAConv').css("display", "none");
-        }
 
-        function selectChangeU(select) {
-           if($('#userSelect :selected').val() != "") {
-            $('.sendAMessage').css("display", "inline-block");
-          } else
-           $('.sendAMessage').css("display", "none");
-        }
-      </script>
         <section id="OpenNewConversation">
           <h4>Liste des utilisateurs</h4>
           <select id="userSelect" onchange="javascript:selectChangeU(this);">
@@ -94,6 +80,7 @@
           </select>
           <button class="StartAConv" data-toggle="modal" style="display: none" data-target="#chatModal">Commencer une conversation</button>
         </section>
+
         <section id="lastMessages">
           <div class="notification-content jumbotron" data-intro='vos messages' data-step="6" >
             <h3>Vos messages</h3>
@@ -101,19 +88,11 @@
             </ul>
           </div>
         </section>
-        <!--<section id="chat">
-          <ul id="messages">
-          </ul>
-          <ul id="users">
-          </ul>
-          <input id="m"  autocomplete="off" />
-          <button id="sendM">Envoyer</button>
-          
-        </section> -->
+
         
         
       </div>
-      <div id="loading"></div>
+    <div class="" id="loading"></div>
     </body>
     <!-- Modal -->
     <div class="modal fade bs-example-modal-sm"  id="Modal" role="dialog">
@@ -165,27 +144,7 @@
         </div>
       </div>
     </div>
-    <!--     <div class="modal fade bs-example-modal-sm"  id="chatModal" role="dialog">
-      <div class="modal-dialog modal-sm"> -->
-        <!-- Modal content-->
-        <!--  <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Méssagerie instantanée</h4>
-          </div>
-          <div class="modal-footer">
-            <section id="chat">
-              <ul id="messagesC">
-              </ul><ul id="users">
-            </ul>
-            <input id="contentMessageC"  autocomplete="off"  placeholder="Entrer le contenu de votre méssage"/>
-          </section>
-          <button id="sendMessageBtnC">Envoyer</button>
-          <p id="confirmSentC"></p>
-        </div>
-      </div>
-    </div>
-  </div> -->
+
   <div class="modal fade bs-example-modal-md"  id="chatModal" role="dialog">
     <div class="modal-dialog modal-md">
       <div class="container">
@@ -218,3 +177,20 @@
 </div>
 </div>
 </html>
+
+      <script>
+        function selectChangeA(select) {
+          console.log($('#activeUserSelect :selected').val());
+          if($('#activeUserSelect :selected').val() != "") {
+            $('.StartAConv').css("display", "inline-block");
+          } else
+           $('.StartAConv').css("display", "none");
+        }
+
+        function selectChangeU(select) {
+           if($('#userSelect :selected').val() != "") {
+            $('.sendAMessage').css("display", "inline-block");
+          } else
+           $('.sendAMessage').css("display", "none");
+        }
+      </script>
