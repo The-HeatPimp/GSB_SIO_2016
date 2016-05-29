@@ -5,7 +5,7 @@
 
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
-	var myEvent = require('../controllers/event');
+var myEvent = require('../controllers/event');
 
 // schema definition
 var VehicleSchema = new Schema({
@@ -15,7 +15,7 @@ var VehicleSchema = new Schema({
 		type: String,
 		default: "Paris"
 	},
-	loanStart:{
+	loanStart: {
 		type: Date,
 		default: 0
 	},
@@ -58,13 +58,7 @@ var RouteSchema = new Schema({
 RouteSchema.post('save',
 	function(RouteShema) {
 		myEvent.emit("pushRoute", {
-			_id: this._id,
-			to: this.to,
-			vehicle: this.vehicle,
-			dateStart: this.dateStart,
-			created_at: this.created_at,
-			driver: this.driver,
-			passenger: this.passenger
+			route: this
 		});
 	});
 RouteSchema.pre('remove',

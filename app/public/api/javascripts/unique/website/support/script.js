@@ -26,7 +26,7 @@
 			};
 			console.log(request);
 			socket.emit('closeTicket', JSON.stringify(request));
-		});
+		}); 
 
 		socket.on('closeTicket', function(data) {
 			console.log(data);

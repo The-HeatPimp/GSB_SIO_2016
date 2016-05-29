@@ -20,7 +20,10 @@ var ScheduleSchema = new Schema({
   description: String,
   creator: String,
   location: String,
-  idRoute: String
+  idRoute: {
+    type: Schema.Types.ObjectId,
+    ref: 'Route'
+  }
 });
 
 // save the model

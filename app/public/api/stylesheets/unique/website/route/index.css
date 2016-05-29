@@ -1,15 +1,17 @@
-.formulaire_location{
+.formulaire_location {
 	margin-top: 80px;
 }
 
-.bouton_find_vehicule{
-	margin-top: 5px;
+.add-on {
+	display: inline-block;
 }
 
-.find_similar{
-	margin-top: 5%;
+.limit-col {
+	height:100%!important;
 }
 
-.vehicule{
-	margin-top: 75%;
+.thumbnail {
+	height: 100% !important;
+	overflow: visible;
+	height: 100% !important;
 }

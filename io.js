@@ -61,81 +61,121 @@ module.exports = function(server) {
 	// Add an event when a route is saved
 	myEvent.on('pushRoute', function(data) {
 		// Validation process
-		var isValid = true;
-		var savedEvent = {};
-		var event;
-		if (!data.passenger)
-			data.passenger = [];
-		Schedule.findOne({
-			idRoute: data._id
-		}, function(err, Eevent) {
-			if (Eevent) {
-				Eevent.participant = data.passenger;
-				event = new Schedule(Eevent);
-			} else {
-				savedEvent = {
-					participant: data.passenger,
-					date_start: data.dateStart,
-					date_end: data.dateEnd,
-					title: "Location d'un véhicule",
-					description: "trajet vers" + data.to,
-					creator: data.driver,
-					location: data.to,
-					idRoute: data._id
-				};
-				for (var prop in savedEvent) {
-					if (!prop) {
-						isValid = false;
-					}
-				}
-				if (isValid)
-					event = new Schedule(savedEvent);
-			}
-		});
-		// Legit
-		if (isValid) {
-			// save the event
-			event.save(function(err) {
-				// send the response to the client
-				var f = 0;
-				var g = 0;
-				var clientID = "";
-				if (err) {
-					for (f = 0; f < connectedUsers.length; f++) {
-						for (g = 0; g < savedEvent.participant.length; g++) {
-							if (connectedUsers[f].user == savedEvent.creator || connectedUsers[f].user == savedEvent.participant[g].username) {
-								clientID = connectedUsers[f].id;
-								io.to(clientID).emit('pushRoute', {
-									"success": true,
-									"event": event
-								});
-							}
-						}
-					}
-				} else {
-					for (f = 0; f < connectedUsers.length; f++) {
-						for (g = 0; g < savedEvent.participant.length; g++) {
-							if (connectedUsers[f].user == savedEvent.creator || connectedUsers[f].user == savedEvent.participant[g].username) {
-								clientID = connectedUsers[f].id;
-								io.to(clientID).emit('pushRoute', {
-									"success": true,
-									"event": event
-								});
 
+		var event = {};
+		var i;
+		console.log(data.route + "\n");
+
+		Schedule.findOne({
+			idRoute: data.route._id
+		}, function(err, Eevent) {
+			console.log("event1" + Eevent);
+			if (!Eevent) {
+				event = new Schedule({
+					date_start: data.route.dateStart,
+					date_end: data.route.dateEnd,
+					title: "Location d'un véhicule",
+					description: "trajet vers" + data.route.to,
+					creator: data.route.driver,
+					location: data.route.to,
+					idRoute: data.route.id
+				});
+				for (i = 0; i < data.route.passenger.length; i++) {
+					event.participant.push({
+						username: data.route.passenger[i].username,
+						participate:true
+					});
+				}
+				console.log("or" + event);
+				event.save(function(err) {
+					// send the response to the client
+					console.log("ok");
+					var f = 0;
+					var g = 0;
+					var clientID = "";
+					if (err) {
+						console.log(err);
+						for (f = 0; f < connectedUsers.length; f++) {
+							for (g = 0; g < event.participant.length; g++) {
+								if (connectedUsers[f].user == event.creator || connectedUsers[f].user == event.participant[g].username) {
+									clientID = connectedUsers[f].id;
+									io.to(clientID).emit('pushRoute', {
+										"success": false,
+										"error": err
+									});
+								}
+							}
+						}
+					} else {
+						console.log("ok123");
+						for (f = 0; f < connectedUsers.length; f++) {
+							for (g = 0; g < event.participant.length; g++) {
+								if (connectedUsers[f].user == event.creator || connectedUsers[f].user == event.participant[g].username) {
+									clientID = connectedUsers[f].id;
+									io.to(clientID).emit('pushRoute', {
+										"success": true,
+										"event": event
+									});
+
+								}
 							}
 						}
 					}
-				}
-			});
-		}
-		// Not legit
-		else {
-			// send the error to the client
-			socket.emit('createRouteEvent', {
-				"success": false,
-				"error": "incomplete request"
-			});
-		}
+				});
+			} else if (err)
+				console.log(err);
+			else {
+				if (data.route.passenger)
+					for (i = 0; i < data.route.passenger.length; i++) {
+						Eevent.participant.push({
+							username: data.route.passenger[i].username,
+							participate: true
+						});
+					}
+				event = new Schedule(Eevent);
+				console.log("first" + event);
+				Schedule.findOneAndUpdate({_id:event._id}, event, {upsert:true}, function(err, evt){
+					// send the response to the client
+					console.log(evt);
+					var f = 0;
+					var g = 0;
+					var clientID = "";
+					if (err) {
+						console.log(err);
+						for (f = 0; f < connectedUsers.length; f++) {
+							for (g = 0; g < event.participant.length; g++) {
+								if (connectedUsers[f].user == event.creator || connectedUsers[f].user == event.participant[g].username) {
+									clientID = connectedUsers[f].id;
+									io.to(clientID).emit('pushRoute', {
+										"success": false,
+										"error": err
+									});
+								}
+							}
+						}
+					} else {
+						console.log("ok123456");
+						for (f = 0; f < connectedUsers.length; f++) {
+							for (g = 0; g < event.participant.length; g++) {
+								if (connectedUsers[f].user == event.creator || connectedUsers[f].user == event.participant[g].username) {
+									clientID = connectedUsers[f].id;
+									io.to(clientID).emit('pushRoute', {
+										"success": true,
+										"event": event
+									});
+
+								}
+							}
+						}
+					}
+				});
+			}
+
+			// Legit
+			console.log("event" + event);
+			// save the event
+
+		});
 	});
 
 	myEvent.on('pushDelRoute', function(data) {

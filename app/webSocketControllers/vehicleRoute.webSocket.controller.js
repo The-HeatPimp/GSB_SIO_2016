@@ -315,40 +315,39 @@ module.exports = function(socket) {
 
 	// Method : deleteMyRoute
 	// Allow the user to delete his route
-	// socket.on('deleteMyRoute', function(data) {
-	// 	name = retrieveName(socket.id);
-	// 	console.log(data);
-	// 	data = JSON.parse(data);
-	// 	// DB request : Find a route with a given ID and driver
-	// 	Route.findOne({
-	// 		$and: [{
-	// 			_id: data._id
-	// 		}, {
-	// 			"driver": name
-	// 		}]
-	// 	}, function(err, route) {
-	// 		// send error to the client
-	// 		if (err)
-	// 			socket.emit('deleteMyRoute', {
-	// 				"success": false,
-	// 				"error": err
-	// 			});
-	// 		else if (!route)
-	// 			socket.emit('deleteMyRoute', {
-	// 				"success": false,
-	// 				"error": "no route found in database"
-	// 			});
-	// 		else {
-	// 			// remeber the vehicle ID
+	socket.on('deleteMyRoute', function(data) {
+		name = retrieveName(socket.id);
+		console.log(data);
+		data = JSON.parse(data);
+		// DB request : Find a route with a given ID and driver
+		Route.findOne({
+			$and: [{
+				_id: data._id
+			}, {
+				"driver": name
+			}]
+		}, function(err, route) {
+			// send error to the client
+			if (err)
+				socket.emit('deleteMyRoute', {
+					"success": false,
+					"error": err
+				});
+			else if (!route)
+				socket.emit('deleteMyRoute', {
+					"success": false,
+					"error": "no route found in database"
+				});
+			else {
+				// remeber the vehicle ID
 
-	// 		}
-	// 	});
-	// });
+			}
+		});
+	});
 
 	// Method : listRoute
 	// List all the existing route that are still to run
-	socket.on('listRoute', function(data) {
-		data = JSON.parse(data);
+	socket.on('listRoute', function() {
 		var currentDate = new Date();
 		// DB request : find routes still to run
 		Route.find({
@@ -362,30 +361,17 @@ module.exports = function(socket) {
 					"success": false,
 					"error": err
 				});
-			else if (!route)
+			else if (route.length<1)
 				socket.emit('listRoute', {
 					"success": false,
 					"error": "no route found in database"
 				});
 			else {
 				// format the response
-				sentRoute = [];
-				for (var i = 0; i < route.length; i++) {
-					sentRoute[i] = {
-						from: route.from,
-						to: route.to,
-						vehicule: route.vehicule,
-						dateStart: route.dateStart,
-						dateEnd: route.dateEnd,
-						freeSeat: route.freeSeat,
-						driver: route.driver,
-						passenger: route.passenger
-					};
-				}
 				// send the response to the user
 				socket.emit('listRoute', {
 					"success": true,
-					"route": sentRoute
+					"route": route
 				});
 			}
 		});
@@ -622,8 +608,6 @@ module.exports = function(socket) {
 	socket.on('takeRoute', function(data) {
 		data = JSON.parse(data);
 		name = retrieveName(socket.id);
-		console.log(data);
-		// DB request : find a route with a given ID
 		Route.findOne({
 			_id: data._id,
 			driver: {
@@ -633,6 +617,7 @@ module.exports = function(socket) {
 				$ne: name
 			}
 		}, function(err, route) {
+		
 			// send the error to the client
 			if (err)
 				socket.emit('takeRoute', {
@@ -694,8 +679,7 @@ module.exports = function(socket) {
 	});
 	// Method : leaveRoute :
 	// Allow a passenger to leave a route
-	// 
-	// TODO BIND EVENT
+
 	socket.on('leaveRoute', function(data) {
 		data = JSON.parse(data);
 		name = retrieveName(socket.id);

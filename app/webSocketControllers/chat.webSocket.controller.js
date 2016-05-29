@@ -49,8 +49,8 @@ module.exports = function(socket) {
 		// legit
 		if (isValid) {
 			// save the object
-			var message = new Chat(data);
-			message.save(function(err,msg) {
+			var message = new Chat(validation);
+			message.save(function(err, msg) {
 				// send the response to the client
 				if (err) {
 					socket.emit('sendMessage', {
@@ -59,7 +59,7 @@ module.exports = function(socket) {
 					});
 
 				} else {
-					
+
 					socket.emit('sendMessage', {
 						"success": true,
 						"message": msg
@@ -99,6 +99,50 @@ module.exports = function(socket) {
 
 			} else {
 				socket.emit('requestAllMessages', {
+					"success": true,
+					"message": messages
+				});
+			}
+		});
+	});
+
+	socket.on('requestAllUserMessages', function(data) {
+		// DB request : find all
+		data = JSON.parse(data);
+		console.log(data);
+		var name = retrieveName(socket.id);
+		Chat.find({
+			$or: [{
+				$and: [{
+					receiver: name
+				}, {
+					sender: data.user
+				}],
+			}, {
+				$and: [{
+					receiver: data.user
+				}, {
+					sender: name
+				}],
+			}]
+		}).sort({
+			date: -1
+		}).exec(function(err, messages) {
+			console.log(messages);
+			// send the response to the client
+			if (err) {
+				socket.emit('requestAllUserMessages', {
+					"success": false,
+					"error": err
+				});
+
+			} else if (messages.length < 1) {
+				socket.emit('requestAllUserMessages', {
+					"success": false,
+					"error": "no messages found"
+				});
+			} else {
+				socket.emit('requestAllUserMessages', {
 					"success": true,
 					"message": messages
 				});
@@ -147,7 +191,7 @@ module.exports = function(socket) {
 		// DB request : find all messages sent to the user, order by date DESC
 		Chat.findOneAndRemove({
 			_id: data._id
-		}, function(err,deld) {
+		}, function(err, deld) {
 			console.log(deld);
 			// send error to the client
 			if (err) {
@@ -155,7 +199,7 @@ module.exports = function(socket) {
 					"success": false,
 					"error": err
 				});
-			} else if(!deld) {
+			} else if (!deld) {
 				socket.emit('deleteMessage', {
 					"success": false,
 					"error": "no message to delete"

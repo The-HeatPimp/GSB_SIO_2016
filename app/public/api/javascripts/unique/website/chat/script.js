@@ -45,6 +45,7 @@
 
     socket.emit('listActiveUser');
     socket.on('listActiveUser', function(data) {
+      console.log(JSON.stringify(data));
       var i = 0;
       var j = 0;
       var userInfo = connect.retrieve.userInfo();
@@ -160,8 +161,7 @@
         var content = $('#contentMessage').val();
         var request = {
           content: content,
-          receiver: receiver,
-          sender: userInfo.username
+          receiver: receiver
         };
         socket.emit('sendMessage', JSON.stringify(request));
       }
