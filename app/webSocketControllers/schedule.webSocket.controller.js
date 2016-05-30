@@ -24,65 +24,69 @@ module.exports = function(socket) {
 	socket.on('createEvent', function(data) {
 		name = retrieveName(socket.id);
 		// validation process
-		var isValid = true;
 		data = JSON.parse(data);
-		var savedEvent = {};
-		savedEvent = {
-			participant: data.participant,
-			date_start: data.date_start,
-			date_end: data.date_end,
-			title: data.title,
-			description: data.description,
-			creator: name,
-			location: data.location
-		};
-		for (var prop in savedEvent) {
-			if (!prop) {
-				isValid = false;
+		console.log(data);
+		var now = new Date();
+		var date1 = new Date(data.date_start);
+		var date2 = new Date(data.date_end);
+		console.log(date1 + " " + date2);
+		if (date1 < date2 && date2 > now) {
+			var isValid = true;
+
+			// Legit
+			if (isValid) {
+				// save the event
+				var savedEvent = {
+					date_start: date1,
+					date_end: date2,
+					title: data.title,
+					description: data.description,
+					creator: name,
+					location: data.location,
+					participant: []
+				};
+
+				var event = new Schedule(savedEvent);
+				event.save(function(err) {
+					// send the response to the client
+					if (err) {
+						socket.emit('createEvent', {
+							"success": false,
+							"error": err
+						});
+
+					} else {
+						socket.emit('createEvent', {
+							"success": true,
+							"event": event
+						});
+					}
+
+				});
 			}
-		}
-		// Legit
-		if (isValid) {
-			// save the event
-			var event = new Schedule(savedEvent);
-			event.save(function(err) {
-				// send the response to the client
-				if (err) {
-					socket.emit('createEvent', {
-						"success": false,
-						"error": err
-					});
-
-				} else {
-					socket.emit('createEvent', {
-						"success": true,
-						"event": event
-					});
-				}
-
-			});
-		}
-		// Not Legit
-		else {
-			// send the error to the client
+			// Not Legit
+			else {
+				// send the error to the client
+				socket.emit('createEvent', {
+					"success": false,
+					"error": "incomplete request"
+				});
+			}
+		} else
 			socket.emit('createEvent', {
 				"success": false,
-				"error": "incomplete request"
+				"error": "bad dates"
 			});
-		}
 	});
 
 	// Method : DeleteEvent :
 	// Delete an event if the user is the creator
 	socket.on('deleteEvent', function(data) {
+		data = JSON.parse(data);
 		name = retrieveName(socket.id);
 		// DB request : find one event with both the id and the creator matching
 		Schedule.findOne({
-			$and: [{
-				_id: data.id
-			}, {
-				"creator": name
-			}]
+			_id: data._id
 		}, function(err, event) {
 			// Send the error to the client
 			if (err)
@@ -94,6 +98,16 @@ module.exports = function(socket) {
 				socket.emit('deleteEvent', {
 					"success": false,
 					"error": "no event found in database"
+				});
+			else if (event.creator != name)
+				socket.emit('deleteEvent', {
+					"success": false,
+					"error": "Authorization not granted"
+				});
+			else if (event.idRoute)
+				socket.emit('deleteEvent', {
+					"success": false,
+					"error": "can't delete a Route event"
 				});
 			else {
 				// remove the event
@@ -116,10 +130,12 @@ module.exports = function(socket) {
 	// update an event with the given parameters
 	socket.on('updateEvent', function(data) {
 		data = JSON.parse(data);
+				name = retrieveName(socket.id);
+
 		// DB request : find One by ID
 		var isValid = false;
 		Schedule.findOne({
-			_id: data.id
+			_id: data._id
 		}, function(err, event) {
 			// Send the error to the client
 			if (err)
@@ -131,6 +147,16 @@ module.exports = function(socket) {
 				socket.emit('updateEvent', {
 					"success": false,
 					"error": "no event found in database"
+				});
+			else if (event.creator != name)
+				socket.emit('updateEvent', {
+					"success": false,
+					"error": "Authorization not granted"
+				});
+			else if (event.idRoute)
+				socket.emit('updateEvent', {
+					"success": false,
+					"error": "can't delete a Route event"
 				});
 			else {
 				// Check for wich property to update and update it
@@ -152,6 +178,10 @@ module.exports = function(socket) {
 				}
 				if ("description" in data) {
 					event.description = data.description;
+					isValid = true;
+				}
+				if ("participant" in data) {
+					event.participant = data.participant;
 					isValid = true;
 				}
 				// If an update occured
@@ -342,52 +372,36 @@ module.exports = function(socket) {
 	});
 	// Method : ListEvent : 
 	// list all the events involving the user
-	socket.on('listEvent', function(data) {
+	socket.on('listEvent', function() {
 		name = retrieveName(socket.id);
-		data = JSON.parse(data);
 		var currentDate = new Date();
 		// DB request : find the events in which the user is involved that haven't already happened
 		Schedule.find({
-				$and: [{
-					$or: [{
-						"creator": name
-					}, {
-						"participant.username": name
-					}]
+				$or: [{
+					"creator": name
 				}, {
-					"date_end": {
-						$gt: currentDate
-					}
+					"participant.username": name
 				}]
 			},
 			function(err, event) {
 				// send the error to the client
+				console.log(event);
 				if (err)
 					socket.emit('listEvent', {
 						"success": false,
 						"error": err
 					});
-				else if (!event)
+				else if (event.length < 1)
 					socket.emit('listEvent', {
 						"success": false,
 						"error": "no event found in database"
 					});
 				else {
-					// format the object to be sent
-					sentEvent = [];
-					for (var i = 0; i < event.length; i++) {
-						sentEvent.push({
-							title: event[i].title,
-							date_start: event[i].date_start,
-							date_end: event[i].date_end,
-							_id: event[i]._id,
-							location: event[i].location
-						});
-					}
 					// send the response to the client
+					console.log("sent");
 					socket.emit('listEvent', {
 						"success": true,
-						"event": sentEvent
+						"event": event
 					});
 				}
 			});
@@ -457,11 +471,13 @@ module.exports = function(socket) {
 	// send the event matching the given ID
 	socket.on('getEvent', function(data) {
 		data = JSON.parse(data);
+		console.log("data" + data);
 		// DB request : findOne event matching the ID
 		Schedule.findOne({
-				_id: data.id
+				_id: data._id
 			},
 			function(err, event) {
+				console.log('get : ' + event);
 				// send the error to the client
 				if (err)
 					socket.emit('getEvent', {
@@ -474,10 +490,11 @@ module.exports = function(socket) {
 						"error": "no event found in database"
 					});
 				else
+					console.log('sent');
 				// send the response to the client
-					socket.emit('getEvent', {
+				socket.emit('getEvent', {
 					"success": true,
-					"ticket": event
+					"event": event
 				});
 			}
 		);

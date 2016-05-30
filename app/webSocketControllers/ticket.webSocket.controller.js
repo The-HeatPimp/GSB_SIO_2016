@@ -21,7 +21,7 @@ module.exports = function(socket) {
 	// Save a ticket to the database
 	socket.on('createTicket', function(data) {
 		console.log("creating ticket");
-		name = retrieveName(socket.id);
+		name = retrieveName(socket.id);	
 		var isValid = true;
 		data = JSON.parse(data);
 		var savedTicket = {};

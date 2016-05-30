@@ -4,6 +4,7 @@
 
 .add-on {
 	display: inline-block;
+	z-index:100000;
 }
 
 .limit-col {

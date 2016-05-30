@@ -140,9 +140,6 @@
 			}
 		});
 
-		function take_route() {
-			alert("Bruh");
-		}
 		$('#foundRoute').on('click', '.acceptRoute', function(e) {
 			var rep = {
 				_id: $(this).parent('li').attr('value')

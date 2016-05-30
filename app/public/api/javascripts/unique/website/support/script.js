@@ -121,11 +121,11 @@
 					userT = data.sender;
 
 				var el = $(".typed").find("[value='" + data.parent + "']");
-				$(el).after("<li value='" + data.parent + "' class='typed lvl2 " + classClosed(data.ticket[i].closed) + "'><span class='chat-from'>" + userT + "</span><span class='chat-date'>" + formatDate(data.message) + "</span><span> " + data.text + "</li>");
+				$(el).after("<li value='" + data.parent + "' class='typed lvl2 " + classClosed(data.ticket.closed) + "'><span class='chat-from'>" + userT + "</span><span class='chat-date'>" + formatDate(data.message) + "</span><span> " + data.text + "</li>");
 			} else
 				$('#confSend').text("echec");
 		});
-
+		socket.on('pushTicket');
 		formatDate = function(date) {
 			var d = new Date(date);
 			var datestring = ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +

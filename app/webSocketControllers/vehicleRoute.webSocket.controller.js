@@ -245,7 +245,6 @@ module.exports = function(socket) {
 	socket.on('createRoute', function(data) {
 		name = retrieveName(socket.id);
 		data = JSON.parse(data);
-		track = data.route;
 		Route.findOne({
 			$and: [{
 				$or: [{
@@ -313,7 +312,7 @@ module.exports = function(socket) {
 							console.log(data);
 							// If the vehicle is free
 							// Create a new route
-							var route = new Route(track);
+							var route = new Route(data.route);
 							route.vehicle = vehicle._id;
 							route.driver = name;
 							route.freeSeat = vehicle.seat - 1;
