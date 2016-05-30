@@ -245,72 +245,117 @@ module.exports = function(socket) {
 	socket.on('createRoute', function(data) {
 		name = retrieveName(socket.id);
 		data = JSON.parse(data);
-		track = JSON.parse(data.route);
-		// DB request : Find a vehicle with the given ID
-		Vehicle.findOne({
-				$and: [{
-					"free": true
+		track = data.route;
+		Route.findOne({
+			$and: [{
+				$or: [{
+					"passenger.username": name
 				}, {
-					"type": data.type
+					"driver": name
 				}]
-			},
-			function(err, vehicle) {
-				// send the error to the client 
-				if (err)
-					socket.emit('createRoute', {
-						"success": false,
-						"error": err
-					});
-				else if (!vehicle || vehicle.length < 1)
-					socket.emit('createRoute', {
-						"success": false,
-						"error": "no vehicle found in database"
-					});
-				else {
-					console.log(data);
-					// If the vehicle is free
-					// Create a new route
-					var route = new Route(track);
-					route.vehicle = vehicle._id;
-					route.driver = name;
-					route.freeSeat = vehicle.seat - 1;
-					// update the vehicle
-					vehicle.free = false;
-					vehicle.loanStart = route.dateStart;
-					vehicle.loanEnd = route.dataEnd;
-					// save the route
-					route.save(function(err) {
-						// send the error to the client
+			}, {
+				$or: [{
+					$and: [{
+						"dateStart": {
+							$lte: data.route.dateStart
+						}
+					}, {
+						"dateEnd": {
+							$gte: data.route.dateStart
+						}
+					}]
+				}, {
+					$and: [{
+						"dateStart": {
+							$lte: data.route.dateEnd
+						}
+					}, {
+						"dateEnd": {
+							$gte: data.route.dateEnd
+						}
+					}]
+				}]
+			}]
+		}, function(err, docs) {
+			if (err)
+				socket.emit('createRoute', {
+					"success": false,
+					"error": err
+				});
+			else if (docs)
+				socket.emit('createRoute', {
+					"success": false,
+					"error": "a route already exist a that time"
+				});
+			else {
+
+				// DB request : Find a vehicle with the given ID
+				Vehicle.findOne({
+						$and: [{
+							"free": true
+						}, {
+							"type": data.type
+						}]
+					},
+					function(err, vehicle) {
+						// send the error to the client 
 						if (err)
 							socket.emit('createRoute', {
 								"success": false,
 								"error": err
 							});
+						else if (!vehicle || vehicle.length < 1)
+							socket.emit('createRoute', {
+								"success": false,
+								"error": "no vehicle found in database"
+							});
 						else {
-							// save the vehicle
-							vehicle.save(function(err) {
-								// send error to the user
-								if (err) {
-									console.log("error : Database integrity compromised".error);
+							console.log(data);
+							// If the vehicle is free
+							// Create a new route
+							var route = new Route(track);
+							route.vehicle = vehicle._id;
+							route.driver = name;
+							route.freeSeat = vehicle.seat - 1;
+							// update the vehicle
+							vehicle.free = false;
+							vehicle.loanStart = route.dateStart;
+							vehicle.loanEnd = route.dataEnd;
+							// save the route
+							route.save(function(err) {
+								// send the error to the client
+								if (err)
 									socket.emit('createRoute', {
 										"success": false,
 										"error": err
 									});
-								} else {
-									// send response to the user
-									route.vehicle = vehicle;
-									socket.emit('createRoute', {
-										"success": true,
-										"route": route
+								else {
+									// save the vehicle
+									vehicle.save(function(err) {
+										// send error to the user
+										if (err) {
+											console.log("error : Database integrity compromised".error);
+											socket.emit('createRoute', {
+												"success": false,
+												"error": err
+											});
+										} else {
+											// send response to the user
+											route.vehicle = vehicle;
+											socket.emit('createRoute', {
+												"success": true,
+												"route": route
 
+											});
+										}
 									});
 								}
+
 							});
 						}
-
 					});
-				}
-			});
+			}
+		});
 	});
 
 	// Method : deleteMyRoute
@@ -327,6 +372,7 @@ module.exports = function(socket) {
 				"driver": name
 			}]
 		}, function(err, route) {
+
 			// send error to the client
 			if (err)
 				socket.emit('deleteMyRoute', {
@@ -339,9 +385,46 @@ module.exports = function(socket) {
 					"error": "no route found in database"
 				});
 			else {
+				console.log(route);
+				route.remove(
+					function(err) {
+						if (err)
+							socket.emit('deleteMyRoute', {
+								"success": false,
+								"error": err
+							});
+						else {
+							Vehicle.findOneAndUpdate({
+								_id: route.vehicle
+							}, {
+								$set: {
+									free: true
+								}
+							}, {
+								new: true
+							}, function(err, doc) {
+								if (err)
+									socket.emit('deleteMyRoute', {
+										"success": false,
+										"error": err
+									});
+								else if (!doc)
+									socket.emit('deleteMyRoute', {
+										"success": false,
+										"error": "no vehicule found in database"
+									});
+								else {
+									socket.emit('deleteMyRoute', {
+										"success": true,
+										"route": route
+									});
+								}
+							});
+						}
+					});
 				// remeber the vehicle ID
-
 			}
+
 		});
 	});
 
@@ -361,7 +444,7 @@ module.exports = function(socket) {
 					"success": false,
 					"error": err
 				});
-			else if (route.length<1)
+			else if (route.length < 1)
 				socket.emit('listRoute', {
 					"success": false,
 					"error": "no route found in database"
@@ -477,7 +560,7 @@ module.exports = function(socket) {
 			} else {
 				// format the response
 				tempTab = [];
-				for (var k = 0; k<route.length;k++) {
+				for (var k = 0; k < route.length; k++) {
 					tempTab.push(route[k].vehicle.toString());
 				}
 				Vehicle.find({
@@ -485,13 +568,13 @@ module.exports = function(socket) {
 						$in: tempTab
 					}
 				}, function(err, vehicle) {
-						
+
 					if (err) {
 						socket.emit('findSimilarRoute', {
 							"success": false,
 							"error": err
 						});
-						
+
 					} else if (vehicle.length < route.length) {
 						socket.emit('findSimilarRoute', {
 							"success": false,
@@ -502,7 +585,7 @@ module.exports = function(socket) {
 						for (var j = 0; j < vehicle.length; j++) {
 							route[j].vehicle = vehicle[j];
 						}
-						
+
 						// send the response to the user
 						socket.emit('findSimilarRoute', {
 							"success": true,
@@ -518,6 +601,7 @@ module.exports = function(socket) {
 	// List the route in which the user is involved
 	socket.on('listMyRoute', function() {
 		name = retrieveName(socket.id);
+		console.log(name);
 
 		// DB request : find the routes in which the user is either driver or passenger
 		Route.find({
@@ -528,35 +612,22 @@ module.exports = function(socket) {
 			}]
 		}, function(err, route) {
 			// send the error to the client
+			console.log(route);
 			if (err)
 				socket.emit('listRoute', {
 					"success": false,
 					"error": err
 				});
-			else if (!route)
-				socket.emit('listRoute', {
+			else if (route.length < 1)
+				socket.emit('listMyRoute', {
 					"success": false,
 					"error": "no route found in database"
 				});
 			else {
-				// Format the reponse
-				sentRoute = [];
-				for (var i = 0; i < route.length; i++) {
-					sentRoute[i] = {
-						from: route.from,
-						to: route.to,
-						vehicule: route.vehicule,
-						dateStart: route.dateStart,
-						dateEnd: route.dateEnd,
-						freeSeat: route.freeSeat,
-						driver: route.driver,
-						passenger: route.passenger
-					};
-				}
 				// send the response to the user
-				socket.emit('listRoute', {
+				socket.emit('listMyRoute', {
 					"success": true,
-					"route": sentRoute
+					"route": route
 				});
 			}
 		});
@@ -617,7 +688,7 @@ module.exports = function(socket) {
 				$ne: name
 			}
 		}, function(err, route) {
-		
+
 			// send the error to the client
 			if (err)
 				socket.emit('takeRoute', {

@@ -61,8 +61,10 @@ RouteSchema.post('save',
 			route: this
 		});
 	});
-RouteSchema.pre('remove',
+
+RouteSchema.post('remove',
 	function(RouteShema) {
+		console.log("removing");
 		myEvent.emit("pushDelRoute", {
 			_id: this._id
 		});
