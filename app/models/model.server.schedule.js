@@ -11,7 +11,7 @@ var ScheduleSchema = new Schema({
     username: String,
     participate: {
       type: Boolean,
-      default: false
+      default: true
     }
   }],
   date_start: Date,

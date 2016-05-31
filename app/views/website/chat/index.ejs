@@ -50,39 +50,39 @@
             <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
             <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
             <li>
-              <a href="agenda" data-intro='Communiquez avec les autres utilisateurs' data-step="3">Agenda</a>
+              <a href="agenda" data-intro='Consultez et gérez votre emploi du temps'' data-step="3">Agenda</a>
             </li>
             <li>
-              <a href="chat" data-intro='Consultez et gérez votre emploi du temps' data-step="4">Chat</a>
+              <a href="chat" data-intro='Communiquez avec les autres utilisateurs' data-step="4">Chat</a>
             </li>
             <li>
-              <a href="support" class="access-2" data-intro='Consultez et gérez votre emploi du temps' data-step="9">Support</a>
+              <a href="support" class="access-2" data-intro='Gérer les tickets incidents' data-step="5">Support</a>
             </li>
             <li>
-              <a href="admin" class="access-3" data-intro='Consultez et gérez votre emploi du temps' data-step="10">Admin</a>
+              <a href="admin" class="access-3" data-intro="Plateforme d'administration" data-step="6">Admin</a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a  href="#" id="helpButton"><i class="fa fa-question-circle-o" aria-hidden="true"></i>Aide</a></li>
-            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="5" data-intro='Onglet de connexion et déconnexion'></a></li>
+            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="7" data-intro='Onglet de connexion et déconnexion'></a></li>
           </ul>
         </div>
       </nav>
 
         <section id="OpenNewConversation">
           <h4>Liste des utilisateurs</h4>
-          <select id="userSelect" onchange="javascript:selectChangeU(this);">
+          <select id="userSelect" onchange="javascript:selectChangeU(this);" data-intro="Selectionnez un utilisateur et envoyez lui un message" data-step="8">
             <option value="">Selectionner un utilisateur</option>
           </select>
           <button class="sendAMessage" data-toggle="modal" style="display: none" data-target="#Modal ">Envoyer un message</button>
-          <select id="activeUserSelect" onchange="javascript:selectChangeA(this);">
+          <select id="activeUserSelect" onchange="javascript:selectChangeA(this);" data-intro="Selectionnez un utilisateur et ouvrez une session de méssagerie instantanée" data-step="9">
             <option value="" selected>Selectionner un utilisateur connecté</option>
           </select>
           <button class="StartAConv" data-toggle="modal" style="display: none" data-target="#chatModal">Commencer une conversation</button>
         </section>
 
-        <section id="lastMessages">
-          <div class="notification-content jumbotron" data-intro='vos messages' data-step="6" >
+        <section id="lastMessages" data-intro="Récapitulatif des méssages recus" data-step="10">
+          <div class="notification-content jumbotron" >
             <h3>Vos messages</h3>
             <ul class="chat-items modulable">
             </ul>

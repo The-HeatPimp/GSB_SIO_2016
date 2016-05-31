@@ -43,7 +43,7 @@ module.exports = function(socket) {
 					description: data.description,
 					creator: name,
 					location: data.location,
-					participant: []
+					participant: data.participant || []
 				};
 
 				var event = new Schedule(savedEvent);
@@ -394,7 +394,7 @@ module.exports = function(socket) {
 				else if (event.length < 1)
 					socket.emit('listEvent', {
 						"success": false,
-						"error": "no event found in database"
+						"event": []
 					});
 				else {
 					// send the response to the client

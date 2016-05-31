@@ -45,31 +45,31 @@
           </button>
           <a href="home" class="navbar-brand">GSB</a>
         </div>
-        <div id="navbarCollapse" class="collapse navbar-collapse">
+                <div id="navbarCollapse" class="collapse navbar-collapse">
           <ul class="nav navbar-nav dynamic-add">
             <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
             <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
             <li>
-              <a href="agenda" data-intro='Communiquez avec les autres utilisateurs' data-step="3">Agenda</a>
+              <a href="agenda" data-intro='Consultez et gérez votre emploi du temps'' data-step="3">Agenda</a>
             </li>
             <li>
-              <a href="chat" data-intro='Consultez et gérez votre emploi du temps' data-step="4">Chat</a>
+              <a href="chat" data-intro='Communiquez avec les autres utilisateurs' data-step="4">Chat</a>
             </li>
             <li>
-              <a href="support" class="access-2" data-intro='Consultez et gérez votre emploi du temps' data-step="9">Support</a>
+              <a href="support" class="access-2" data-intro='Gérer les tickets incidents' data-step="5">Support</a>
             </li>
             <li>
-              <a href="admin" class="access-3" data-intro='Consultez et gérez votre emploi du temps' data-step="10">Admin</a>
+              <a href="admin" class="access-3" data-intro="Plateforme d'administration" data-step="6">Admin</a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a  href="#" id="helpButton"><i class="fa fa-question-circle-o" aria-hidden="true"></i>Aide</a></li>
-            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="5" data-intro='Onglet de connexion et déconnexion'></a></li>
+            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="7" data-intro='Onglet de connexion et déconnexion'></a></li>
           </ul>
         </div>
       </nav>
       <div class="row">
-        <div id="pti" class="col-lg-offset-4 col-lg-4 col-ms-4 col-sm-4 col-xs-4">
+        <div id="pti" class="col-lg-offset-4 col-lg-4 col-ms-4 col-sm-4 col-xs-4" data-intro='ouvrir un nouveau ticket' data-step="8">
           <label id="type">Type d'incident</label>
           <select id="choix" name="select" class="form-control">
             <option value=""> Selectionnez le type de problème </option>
@@ -99,7 +99,7 @@
       </div>
       
       <section id="lastTickets">
-        <div class="notification-content jumbotron" data-intro='vos ticket' data-step="6" >
+        <div class="notification-content jumbotron" data-intro='Consulter vos tickets' data-step="9" >
           <h3>Vos tickets</h3>
           <ul class="chat-items modulable" id="listTicket">
           </ul>

@@ -1,14 +1,16 @@
 .modalInfo span {
-    line-height: 7px;
     padding: 2px;
     padding-top: 4px;
     padding-bottom: 4px;
+
     font-weight: bold;
+    line-height: 7px;
 }
 
 .add-on {
-    display: inline-block;
     z-index: 100000;
+
+    display: inline-block;
 }
 
 .modalInfo {
@@ -22,6 +24,7 @@
 .Slocation {
     font-size: 10px;
     font-weight: 100;
+
     color: grey;
 }
 
@@ -43,23 +46,22 @@
 .Sinfo {
     font-size: 15px;
     font-weight: 900;
+
     color: black;
 }
 
 #calendar {
-    margin-left: 30px;
-    margin-right: 30px;
     margin-top: 60px;
+    margin-right: 30px;
+    margin-left: 30px;
 }
 
 #openCModal {
-    margin: 40px;
     padding: 10px;
+    margin: 40px;
 }
 
-.multiselect {
 
-}
 
 .selectBox {
     position: relative;
@@ -67,20 +69,31 @@
 
 .selectBox select {
     width: 100%;
+
     font-weight: bold;
 }
+.selectBox2 {
+    position: relative;
+}
 
+.selectBox2 select {
+    width: 100%;
+
+    font-weight: bold;
+}
 .overSelect {
     position: absolute;
-    left: 0;
-    right: 0;
     top: 0;
+    right: 0;
     bottom: 0;
+    left: 0;
+
     cursor: pointer;
 }
 
 #checkboxes {
     display: none;
+
     border: 1px #dadada solid;
 }
 
@@ -89,5 +102,19 @@
 }
 
 #checkboxes label:hover {
+    background-color: #1e90ff;
+}
+
+#checkboxes2 {
+    display: none;
+
+    border: 1px #dadada solid;
+}
+
+#checkboxes2 label {
+    display: block;
+}
+
+#checkboxes2 label:hover {
     background-color: #1e90ff;
 }

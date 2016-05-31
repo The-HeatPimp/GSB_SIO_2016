@@ -52,33 +52,33 @@
             <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
             <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
             <li>
-              <a href="agenda" data-intro='Communiquez avec les autres utilisateurs' data-step="3">Agenda</a>
+              <a href="agenda" data-intro='Consultez et gérez votre emploi du temps'' data-step="3">Agenda</a>
             </li>
             <li>
-              <a href="chat" data-intro='Consultez et gérez votre emploi du temps' data-step="4">Chat</a>
+              <a href="chat" data-intro='Communiquez avec les autres utilisateurs' data-step="4">Chat</a>
             </li>
             <li>
-              <a href="support" class="access-2" data-intro='Consultez et gérez votre emploi du temps' data-step="9">Support</a>
+              <a href="support" class="access-2" data-intro='Gérer les tickets incidents' data-step="5">Support</a>
             </li>
             <li>
-              <a href="admin" class="access-3" data-intro='Consultez et gérez votre emploi du temps' data-step="10">Admin</a>
+              <a href="admin" class="access-3" data-intro="Plateforme d'administration" data-step="6">Admin</a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a  href="#" id="helpButton"><i class="fa fa-question-circle-o" aria-hidden="true"></i>Aide</a></li>
-            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="5" data-intro='Onglet de connexion et déconnexion'></a></li>
+            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="7" data-intro='Onglet de connexion et déconnexion'></a></li>
           </ul>
         </div>
       </nav>
       <div class="row">
         <div class="col-sm-12 home-notification rdv">
-          <div class="notification-content jumbotron" data-intro='Aperçu de vos prochains rendez-vous' data-step="8">
+          <div class="notification-content jumbotron" data-intro='Aperçu de vos trajet' data-step="8">
             <h3>Vos prochains trajets</h3>
             <div class="row event-items large">
             </div>
           </div>
         </div>
-        <div class="col-lg-offset-4 col-lg-4 find_similar">
+        <div class="col-lg-offset-4 col-lg-4 find_similar" data-intro='Rechercher un nouveau trajet ou en créer un nouveau' data-step="9">
           <h1>Nouveau trajet</h1>
           <div class="well">
             <label class="datedepart"> Date de départ </label>
@@ -103,7 +103,25 @@
               <span class="add-on"><i class="fa fa-calendar" aria-hidden="true"></i>
               </span>
             </div>
-            
+            <div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker1'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker1').datetimepicker();
+            });
+        </script>
+    </div>
+</div>
             <label class="datetimepicker3"> Heure de retour </label>
             <div class="datetimepicker3" class="input-append">
               <input id="timeTR" data-format="hh:mm:ss" type="text"></input>
