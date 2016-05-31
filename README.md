@@ -39,5 +39,12 @@ Lancer une console de commande depuis la racine répertoire contenant le serveur
 node server.js
 ```
 
+### restaurer la base de donnée : ###
+lancer invite de commande dans le dossier program files/MongoDB/[...]/bin
+avec le serveur lancé :
+use [nom de la database - généralement -> PPE2015]
+db.dropDatabase()
+mongorestore
+
 ### Lien vers le wiki ###
 [Accueil](https://bitbucket.org/sico2015/ppe/wiki/Home)
