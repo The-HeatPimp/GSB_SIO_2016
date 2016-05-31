@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="javascripts/common/loadingScreen.js"></script>
+    <link rel="stylesheet" href="stylesheets/common/commonPages.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
+    <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
+    <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
+    <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
+    <script>
+    var socket;
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/assets/introjs/intro.js"></script>
+    <script src="javascripts/common/cookies.js"></script>
+    <script src="javascripts/common/connect.js"></script>
+    <script src="javascripts/common/connectSocket.js"></script>
+    <script src="javascripts/common/disconnect.js"></script>
+    <script src="javascripts/common/hideByAccessLevel.js"></script>
+    <script src="javascripts/common/addParam.js"></script>
+    <script src="javascripts/unique/website/script.js"></script>
+  </head>
+  
+  <body>
+    <div id="page">
+      <nav role="navigation" class="navbar navbar-inverse">
+        <div class="navbar-header">
+          <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </button>
+          <a href="home" class="navbar-brand">GSB</a>
+        </div>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav dynamic-add">
+            <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
+            <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
+            <li>
+              <a href="agenda" data-intro='Consultez et gérez votre emploi du temps'' data-step="3">Agenda</a>
+            </li>
+            <li>
+              <a href="chat" data-intro='Communiquez avec les autres utilisateurs' data-step="4">Chat</a>
+            </li>
+            <li>
+              <a href="support" class="access-2" data-intro='Gérer les tickets incidents' data-step="5">Support</a>
+            </li>
+            <li>
+              <a href="admin" class="access-3" data-intro="Plateforme d'administration" data-step="6">Admin</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a  href="#" id="helpButton"><i class="fa fa-question-circle-o" aria-hidden="true"></i>Aide</a></li>
+            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="7" data-intro='Onglet de connexion et déconnexion'></a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="container-fluid row">
+        <div class="description_index">
+          <div class="text-center">
+            <h1>
+            Tableau de bord
+            </h1>
+          </div>
+        </div>
+        <div class="text-center">
+          <div class="col-sm-6 home-notification top" >
+            <div class="notification-content jumbotron" data-intro='Aperçu de vos derniers messages' data-step="8" >
+              <h3>Vos derniers messages</h3>
+              <ul class="chat-items">
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 home-notification top">
+            <div class="notification-content jumbotron" data-intro='Aperçu des dernières réponses à vos tickets' data-step="9">
+              <h3>Les dernières réponses a vos tickets</h3>
+            <ul class="ticket-items"></ul>
+          </div>
+        </div>
+        <div class="col-sm-12 home-notification rdv">
+          <div class="notification-content jumbotron" data-intro='Aperçu de vos prochains rendez-vous' data-step="10">
+            <h3>Vos prochains rendez-vous</h3>
+            <div class="row event-items">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center" data-intro="Téléchargez l'application mobile" data-step="11">
+    <a class="btn btn-info" href="app-debug.apk">télécharger l'application mobile</a>
+    </div>
+  </div>
+  <div class="" id="loading"></div>
+</body>
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm"  id="myModal" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Déconnexion</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
+        <button type="submit" id="disconnect" class="btn btn-info"> Confirmer </button>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

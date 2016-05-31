@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+    <link rel="stylesheet" href="stylesheets/common/commonPages.css"/>
+    <script src="javascripts/common/loadingScreen.js"></script>
+    <link rel="stylesheet" href="stylesheets/assets/bootstrap.min.css"/>
+    <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/chat/index.css"/>
+    <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
+    <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
+    <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
+
+    <script>
+    var socket;
+    </script>
+    <script src="javascripts/assets/jquery.js"></script>
+    
+    <script src="javascripts/assets/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/assets/introjs/intro.js"></script>
+    <script src="javascripts/common/cookies.js"></script>
+    <script src="javascripts/common/connect.js"></script>
+    <script src="javascripts/common/connectSocket.js"></script>
+    <script src="javascripts/common/disconnect.js"></script>
+    <script src="javascripts/common/hideByAccessLevel.js"></script>
+    <script src="javascripts/common/addParam.js"></script>
+    <script src="javascripts/unique/website/chat/script.js"></script>
+  </head>
+  
+  <body>
+    <div id="page">
+     <nav role="navigation" class="navbar navbar-inverse">
+        <div class="navbar-header">
+          <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </button>
+          <a href="home" class="navbar-brand">GSB</a>
+        </div>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav dynamic-add">
+            <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
+            <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
+            <li>
+              <a href="agenda" data-intro='Consultez et gérez votre emploi du temps'' data-step="3">Agenda</a>
+            </li>
+            <li>
+              <a href="chat" data-intro='Communiquez avec les autres utilisateurs' data-step="4">Chat</a>
+            </li>
+            <li>
+              <a href="support" class="access-2" data-intro='Gérer les tickets incidents' data-step="5">Support</a>
+            </li>
+            <li>
+              <a href="admin" class="access-3" data-intro="Plateforme d'administration" data-step="6">Admin</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a  href="#" id="helpButton"><i class="fa fa-question-circle-o" aria-hidden="true"></i>Aide</a></li>
+            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="7" data-intro='Onglet de connexion et déconnexion'></a></li>
+          </ul>
+        </div>
+      </nav>
+
+        <section id="OpenNewConversation">
+          <h4>Liste des utilisateurs</h4>
+          <select id="userSelect" onchange="javascript:selectChangeU(this);" data-intro="Selectionnez un utilisateur et envoyez lui un message" data-step="8">
+            <option value="">Selectionner un utilisateur</option>
+          </select>
+          <button class="sendAMessage" data-toggle="modal" style="display: none" data-target="#Modal ">Envoyer un message</button>
+          <select id="activeUserSelect" onchange="javascript:selectChangeA(this);" data-intro="Selectionnez un utilisateur et ouvrez une session de méssagerie instantanée" data-step="9">
+            <option value="" selected>Selectionner un utilisateur connecté</option>
+          </select>
+          <button class="StartAConv" data-toggle="modal" style="display: none" data-target="#chatModal">Commencer une conversation</button>
+        </section>
+
+        <section id="lastMessages" data-intro="Récapitulatif des méssages recus" data-step="10">
+          <div class="notification-content jumbotron" >
+            <h3>Vos messages</h3>
+            <ul class="chat-items modulable">
+            </ul>
+          </div>
+        </section>
+
+        
+        
+      </div>
+    <div class="" id="loading"></div>
+    </body>
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-sm"  id="Modal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Formulaire d'envoi</h4>
+          </div>
+          <div class="modal-footer">
+            <textarea id="contentMessage" placeholder="Entrer le contenu de votre méssage"></textarea>
+            <button id="sendMessageBtn">Envoyer</button>
+            <p id="confirmSent"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-sm"  id="myModal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Déconnexion</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
+            <button type="submit" id="disconnect" class="btn btn-info"> Confirmer </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade bs-example-modal-sm"  id="delModal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Voulez vous vraiment continuer</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
+            <button type="submit" id="delMsg" class="btn btn-info"> Confirmer </button>
+            <p id="confDel"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="modal fade bs-example-modal-md"  id="chatModal" role="dialog">
+    <div class="modal-dialog modal-md">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <span></span> Chat
+                <div class="btn-group pull-right">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <ul class="chat">        
+        </ul>
+      </div>
+      <div class="panel-footer">
+        <div class="input-group">
+          <input id="btn-input" class="form-control input-sm" placeholder="Type your message here..." autocomplete="off" type="text">
+          <span class="input-group-btn">
+            <button class="btn btn-warning btn-sm" id="btn-chat">
+            Send</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</html>
+
+      <script>
+        function selectChangeA(select) {
+          console.log($('#activeUserSelect :selected').val());
+          if($('#activeUserSelect :selected').val() != "") {
+            $('.StartAConv').css("display", "inline-block");
+          } else
+           $('.StartAConv').css("display", "none");
+        }
+
+        function selectChangeU(select) {
+           if($('#userSelect :selected').val() != "") {
+            $('.sendAMessage').css("display", "inline-block");
+          } else
+           $('.sendAMessage').css("display", "none");
+        }
+      </script>

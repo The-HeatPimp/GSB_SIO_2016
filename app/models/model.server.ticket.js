@@ -55,12 +55,13 @@ TicketSchema.pre('save',
 TicketSchema.post('save',
   function(TicketSchema) {
     myEvent.emit("pushTicket", {
-      id: this._id,
+      _id: this._id,
       title: this.title,
       typeRequest: this.typeRequest,
       priority: this.priority,
       created_at: this.created_at,
-      message: this.message
+      message: this.message,
+      creator: this.creator
     });
   });
 

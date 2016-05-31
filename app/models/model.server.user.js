@@ -4,17 +4,20 @@
 
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	validator = require('validator');
-	
+	crypto = require('crypto');
+validator = require('validator');
+
 // Schema definition
 var UserSchema = new Schema({
 	firstName: String,
 	lastName: String,
-	accessLevel: Number,
+	accessLevel: {
+		type: Number,
+		default: 1
+	},
 	email: String,
 	username: {
 		type: String,
-		unique: true,
 		trim: true
 	},
 	address: [{
@@ -27,7 +30,6 @@ var UserSchema = new Schema({
 	updated_at: Date,
 	password: String
 });
-
 
 // Operation before saving the document
 UserSchema.pre('save',

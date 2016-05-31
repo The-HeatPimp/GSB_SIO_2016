@@ -37,7 +37,17 @@ var fs = require('fs'),
 
 var db = mongoose(),
 	app = express();
+var backup = require('mongodb-backup');
 
+// Backup the mongoDB database
+backup({
+  uri: 'mongodb://localhost/PPE2015', // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
+  root: './backup', // write files into this dir
+  callback:[confirmBackup()]
+});
+function confirmBackup () {
+	console.log("backup succesfull");
+}
 /*
 	Launching the server on the port defined in the environment configs
  */

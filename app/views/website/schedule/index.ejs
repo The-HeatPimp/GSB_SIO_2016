@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="javascripts/common/loadingScreen.js"></script>
+    <link rel="stylesheet" href="stylesheets/common/commonPages.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="javascripts/assets/introjs/introjs.css"/>
+    <link rel="stylesheet" href="javascripts/assets/bootstrap-calendar-master/css/calendar.css">
+    <link rel="stylesheet" href="stylesheets/unique/website/index.css"/>
+    <link rel="stylesheet" href="stylesheets/unique/website/schedule/index.css"/>
+    <link rel="stylesheet" href="stylesheets/common/responsive.css"/>
+    <link rel="stylesheet" href="stylesheets/common/navbar.css"/>
+    <link rel="stylesheet" href="stylesheets/assets/font-awesome.min.css"/>
+    <link rel="stylesheet" href="javascripts/assets/datepicker/css/datepicker.css"/>
+    <link rel="stylesheet" href="javascripts/assets/dateTimePicker/css/bootstrap-datetimepicker.min.css"/>
+    <script>
+    var socket;
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="javascripts/assets/bootstrap-master/dist/js/bootstrap.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/assets/introjs/intro.js"></script>
+    <script src="javascripts/assets/bootstrap-calendar-master/components/underscore/underscore-min.js"></script>
+    <script type="text/javascript" src="javascripts/assets/moment-develop/moment.js"></script>
+    <script type="text/javascript" src="javascripts/assets/bootstrap-master/js/transition.js"></script>
+    <script type="text/javascript" src="javascripts/assets/bootstrap-master/js/collapse.js"></script>
+    <script src="javascripts/assets/bootstrap-calendar-master/js/calendar.js"></script>
+    <script src="javascripts/common/cookies.js"></script>
+    <script src="javascripts/common/connect.js"></script>
+    <script src="javascripts/common/connectSocket.js"></script>
+    <script src="javascripts/common/disconnect.js"></script>
+    <script src="javascripts/common/hideByAccessLevel.js"></script>
+    <script src="javascripts/common/addParam.js"></script>
+    <script src="javascripts/assets/datepicker/js/bootstrap-datepicker.js"></script>
+    <script src="javascripts/assets/dateTimePicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="javascripts/unique/website/schedule/script.js"></script>
+    <script type="text/javascript" src="javascripts/assets/bootstrap-calendar-master/js/language/fr-FR.js"></script>
+    <script type="text/javascript" src="javascripts/assets/fr.js"></script>
+  </head>
+  <script type="text/javascript">
+  $(function() {
+  $('.datetimepicker3').datetimepicker({
+  locale: 'fr'
+  });
+  });
+  $(function() {
+  $('.datetimepicker2').datetimepicker({
+  pickDate: false,
+  locale: 'fr'
+  });
+  });
+  </script>
+  <body>
+    <div id="page">
+      <nav role="navigation" class="navbar navbar-inverse">
+        <div class="navbar-header">
+          <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </button>
+          <a href="home" class="navbar-brand">GSB</a>
+        </div>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav dynamic-add">
+            <li ><a href="ticket" data-intro='Contactez le service support pour résoudre vos problèmes' data-step="1" >Tickets incidents</a></li>
+            <li><a href="locationVehicule" data-intro='Reserver un véhicule utilitaire pour vos déplacements' data-step="2">Locations vehicules</a></li>
+            <li>
+              <a href="agenda" data-intro='Consultez et gérez votre emploi du temps'' data-step="3">Agenda</a>
+            </li>
+            <li>
+              <a href="chat" data-intro='Communiquez avec les autres utilisateurs' data-step="4">Chat</a>
+            </li>
+            <li>
+              <a href="support" class="access-2" data-intro='Gérer les tickets incidents' data-step="5">Support</a>
+            </li>
+            <li>
+              <a href="admin" class="access-3" data-intro="Plateforme d'administration" data-step="6">Admin</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a  href="#" id="helpButton"><i class="fa fa-question-circle-o" aria-hidden="true"></i>Aide</a></li>
+            <li><a  data-toggle="modal" data-target="#myModal" id="userInfo" href="#"  data-step="7" data-intro='Onglet de connexion et déconnexion'></a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="container"  id="calendCont">
+        <div class="page-header">
+          <div class="pull-right form-inline"  data-intro="Changez de mode d'affichage" data-step="8">
+            <div class="btn-group">
+              <button data-calendar-nav="prev" class="btn btn-primary">&lt;&lt; Prec</button>
+              <button data-calendar-nav="today" class="btn">Aujourd'hui</button>
+              <button data-calendar-nav="next" class="btn btn-primary">Suiv &gt;&gt;</button>
+            </div>
+            <div class="btn-group">
+              <button data-calendar-view="year" class="btn btn-warning">Année</button>
+              <button data-calendar-view="month" class="btn btn-warning active">Mois</button>
+              <button data-calendar-view="week" class="btn btn-warning">Semaine</button>
+              <button data-calendar-view="day" class="btn btn-warning">Jour</button>
+            </div>
+          </div>
+        </div>
+        <div id="calendar" data-intro='Consultez votre calendrier et gerez vos évenement' data-step="9"></div>
+      </div>
+      <div class="text-center" data-intro='Créez un nouvel évenement' data-step="10">
+        <button  type="button" class="btn btn-default" data-toggle="modal" data-target="#createEventModal" id="openCModal" >Créer un nouvel évenement</button>
+      </div>
+    </div>
+    <div class="" id="loading"></div>
+  </body>
+  <!-- Modal -->
+  <div class="modal fade bs-example-modal-sm"  id="myModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Déconnexion</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
+          <button type="submit" id="disconnect" class="btn btn-info"> Confirmer </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="events-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3>Evenement</h3>
+          <div class="modal-body" style="height: 400px">
+          </div>
+          <div class="modal-footer">
+            <a href="#" data-dismiss="modal" class="btn">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade bs-example-modal-md"  id="createEventModal" role="dialog">
+    <div class="modal-dialog modal-md">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Créer un évenement</h4>
+        </div>
+        <div class="modal-footer">
+          <div class="multiselect">
+            <div class="selectBox">
+              <select>
+                <option>Sélectionner les utilisateurs à inviter</option>
+              </select>
+              <div class="overSelect"></div>
+            </div>
+            <div id="checkboxes">
+            </div>
+          </div>
+          <div class="well">
+            <label class="datetimepicker3"> Date de départ </label>
+            <div class="datetimepicker3" class="input-append">
+              <input id="NdateD" data-format="yyyy-MM-dd" type="text" />
+              <span class="add-on">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+              </span>
+            </div>
+            
+            <label class="datetimepicker2"> Heure de départ </label>
+            <div class="datetimepicker2" class="input-append">
+              <input id="NtimeD" data-format="hh:mm:ss" type="text"/>
+              <span class="add-on">
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div class="well">
+            <label class="datetimepicker3"> Date de retour </label>
+            <div class="datetimepicker3" class="input-append">
+              <input id="NdateR" data-format="yyyy-MM-dd" type="text" />
+              <span class="add-on">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+              </span>
+            </div>
+            
+            <label class="datetimepicker2"> date de retour </label>
+            <div class="datetimepicker2" class="input-append">
+              <input id="NtimeR" data-format="hh:mm:ss" type="text"/>
+              <span class="add-on">
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <label class="dest">titre </label>
+          <input id="Ndest" type="text" class="destination form-control"  placeholder="titre" autocomplete:off></input>
+          <br>
+          <label class="dest">description </label>
+          <input id="Ndesc" type="text" class="destination form-control"  placeholder="description" autocomplete:off></input>
+          <br>
+          <label class="dest">location </label>
+          <input id="Nloc" type="text" class="destination form-control"  placeholder="location" autocomplete:off></input>
+          <br>
+          <div class="text-center">
+          <button type="button" disabled id="NcreateR" class="btn btn-info"></span> Envoyer la reservation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade bs-example-modal-md"  id="changeEventModal" role="dialog">
+  <div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Créer un évenement</h4>
+      </div>
+      <div class="modal-footer">
+        <div class="multiselect">
+          <div class="selectBox2">
+            <select>
+              <option>Sélectionner les utilisateurs à inviter</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes2">
+          </div>
+        </div>
+        <div class="text-center">
+        <button type="button" id="NchangeR" class="btn btn-info"></span> Envoyer la reservation</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</html>

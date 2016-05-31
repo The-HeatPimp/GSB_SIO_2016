@@ -1,0 +1,18 @@
+.formulaire_location {
+	margin-top: 80px;
+}
+
+.add-on {
+	display: inline-block;
+	z-index:100000;
+}
+
+.limit-col {
+	height:100%!important;
+}
+
+.thumbnail {
+	height: 100% !important;
+	overflow: visible;
+	height: 100% !important;
+}

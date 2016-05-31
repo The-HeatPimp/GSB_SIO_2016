@@ -18,6 +18,39 @@ module.exports = function(socket) {
 		}
 	}
 
+
+	socket.on('findUniqueUsername', function(username) {
+		var response = "";
+		User.findOne({
+				username: username
+			},
+			function(err, user) {
+				if (!err) {
+					if (!user) {
+						// Return the possible Username
+						socket.emit('findUniqueUsername', {
+							success: true
+						});
+					} else {
+						// Loop the method and search for a possible username with a suffix
+						socket.emit('findUniqueUsername', {
+							success: false,
+							error: "Nom d'utilisateur deja prit"
+						});
+					}
+				} else {
+					// return nothing if there are missing parameters
+					socket.emit('findUniqueUsername', {
+						success: false,
+						"error": "bad request"
+					});
+				}
+			}
+		);
+		console.log(response);
+	});
+
+
 	// Method : CreateUser
 	// Allow an admin to create an user
 	socket.on('createUser', function(data) {
@@ -27,55 +60,33 @@ module.exports = function(socket) {
 			// validation process
 			var isValid = true;
 			data = JSON.parse(data);
-			var savedUser = new User();
-			// prevent crash in case of uncomplete request
-			if (data.address) {
-				savedUser = {
-					firstName: data.firstName,
-					lastName: data.lastName,
-					email: data.email,
-					username: data.username,
-					address: [{
-						street: data.address.street,
-						zipCode: data.address.zipCode,
-						city: data.address.city
-					}],
-					tel: data.tel,
-					password: data.password
-				};
-				for (var prop in savedUser) {
-					if (!savedUser.prop) {
-						isValid = false;
-					}
-				}
-				// legit
-				if (isValid) {
-					// save the user
-					User.save(function(err) {
-						// send the response to the client
-						if (err)
-							socket.emit('createUser', {
-								"success": false,
-								"error": err
-							});
+			console.log(data);
+			var savedUser = new User(data);
 
-						else
-							socket.emit('createUser', {
-								"success": true,
-								"user": user
-							});
+			console.log(savedUser);
+			// legit
+			if (isValid) {
+				// save the user
 
-					});
+				savedUser.save(function(err) {
+					// send the response to the client
+					if (err)
+						socket.emit('createUser', {
+							"success": false,
+							"error": err
+						});
 
-				}
-				// not legit
-				else
-				// send the error to the client
-					socket.emit('createUser', {
-					"success": false,
-					"error": "uncomplete request"
+					else
+						socket.emit('createUser', {
+							"success": true,
+							"user": savedUser
+						});
+
 				});
-			} else
+
+			}
+			// not legit
+			else
 			// send the error to the client
 				socket.emit('createUser', {
 				"success": false,
@@ -91,47 +102,28 @@ module.exports = function(socket) {
 
 	// Method : listUser :
 	// List all the user
-	socket.on('listUser', function(data) {
-		data = JSON.parse(data);
+	socket.on('listUser', function() {
+		var validated = true;
+
 		// DB request : Find all the users
 		User.find({}, function(err, users) {
 			// send the error to the client
+
 			if (err)
 				socket.emit('listUser', {
 					"success": false,
 					"error": err
 				});
-			else if (!user)
+			else if (!users)
 				socket.emit('listUser', {
 					"success": false,
 					"error": "no user found in database"
 				});
-			else {
-				// format the response
-				var sentUser = [];
-				for (var i = 0; i < users.length; i++) {
-					sentUser[i] = {
-						id: users.id,
-						firstName: users.firstName,
-						lastName: users.lastName,
-						email: users.email,
-						username: users.username,
-						address: [{
-							street: users.address.street,
-							zipCode: users.address.zipCode,
-							city: users.address.city
-						}],
-						tel: users.tel,
-						created_at: users.created_at,
-						updated_at: users.updated_at,
-					};
-				}
-				// send the response to the client
+			else
 				socket.emit('listUser', {
 					"success": true,
-					"users": sentUser
+					"users": users
 				});
-			}
 		});
 	});
 
@@ -186,36 +178,22 @@ module.exports = function(socket) {
 		// Check for authorization
 		if (AdminHandler.accessLevel(name) > 2) {
 			data = JSON.parse(data);
+			console.log(data);
 			// DB request : find a user matching the given ID
-			User.find({
-				_id: data.id
-			}, function(err, user) {
-				// Send the error to the client
+			User.remove({
+				_id: data._id
+			}, function(err) {
+				// send the response to the client
 				if (err)
 					socket.emit('deleteUser', {
 						"success": false,
 						"error": err
 					});
-				else if (!user)
+				else
 					socket.emit('deleteUser', {
-						"success": false,
-						"error": "no user found in database"
+						"success": true,
+						'_id': data._id
 					});
-				else {
-					// remove the user from the database
-					user.remove(function(err) {
-						// send the response to the client
-						if (err)
-							socket.emit('deleteUser', {
-								"success": false,
-								"error": err
-							});
-						else
-							socket.emit('deleteUser', {
-								"success": true
-							});
-					});
-				}
 			});
 		} else
 		// send the authorization error to the client

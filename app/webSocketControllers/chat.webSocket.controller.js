@@ -8,6 +8,11 @@ var connectedUsers = top.connectedUsers();
 
 module.exports = function(socket) {
 
+	socket.on('chat-message', function(msg) {
+		console.log('message : ' + msg);
+		socket.emit('chat-message', msg); // emition a tout le monde !
+	});
+
 	// retrieve the name of the user by matching his sessionID with his username contained in connectedUsers
 	function retrieveName(sessionID) {
 		for (var item = 0; item < connectedUsers.length; item++) {
@@ -16,7 +21,14 @@ module.exports = function(socket) {
 			}
 		}
 	}
-	
+	// Send regular event TEST
+	function sendTime() {
+		socket.emit('time', {
+			time: new Date().toJSON()
+		});
+	}
+	setInterval(sendTime, 10000);
+
 	// Method : SendMessage :
 	// Save a message in the database
 	socket.on('sendMessage', function(data) {
@@ -37,8 +49,8 @@ module.exports = function(socket) {
 		// legit
 		if (isValid) {
 			// save the object
-			var message = new Chat(data);
-			message.save(function(err) {
+			var message = new Chat(validation);
+			message.save(function(err, msg) {
 				// send the response to the client
 				if (err) {
 					socket.emit('sendMessage', {
@@ -47,9 +59,10 @@ module.exports = function(socket) {
 					});
 
 				} else {
+
 					socket.emit('sendMessage', {
 						"success": true,
-						"message": message
+						"message": msg
 					});
 				}
 			});
@@ -66,9 +79,17 @@ module.exports = function(socket) {
 	// Method : requestAllMessages : 
 	// request All the messages 
 	socket.on('requestAllMessages', function(data) {
-		data = JSON.parse(data);
 		// DB request : find all
-		Chat.find({}, function(err, messages) {
+		var name = retrieveName(socket.id);
+		Chat.find({
+			$or: [{
+				receiver: name
+			}, {
+				sender: name
+			}]
+		}).sort({
+			date: -1
+		}).exec(function(err, messages) {
 			// send the response to the client
 			if (err) {
 				socket.emit('requestAllMessages', {
@@ -79,7 +100,51 @@ module.exports = function(socket) {
 			} else {
 				socket.emit('requestAllMessages', {
 					"success": true,
-					"message": message
+					"message": messages
+				});
+			}
+		});
+	});
+
+	socket.on('requestAllUserMessages', function(data) {
+		// DB request : find all
+		data = JSON.parse(data);
+		console.log(data);
+		var name = retrieveName(socket.id);
+		Chat.find({
+			$or: [{
+				$and: [{
+					receiver: name
+				}, {
+					sender: data.user
+				}],
+			}, {
+				$and: [{
+					receiver: data.user
+				}, {
+					sender: name
+				}],
+			}]
+		}).sort({
+			date: -1
+		}).exec(function(err, messages) {
+			console.log(messages);
+			// send the response to the client
+			if (err) {
+				socket.emit('requestAllUserMessages', {
+					"success": false,
+					"error": err
+				});
+
+			} else if (messages.length < 1) {
+				socket.emit('requestAllUserMessages', {
+					"success": false,
+					"error": "no messages found"
+				});
+			} else {
+				socket.emit('requestAllUserMessages', {
+					"success": true,
+					"message": messages
 				});
 			}
 		});
@@ -115,6 +180,35 @@ module.exports = function(socket) {
 				socket.emit('requestLastMessage', {
 					"success": true,
 					"message": response
+				});
+			}
+		});
+	});
+
+	socket.on('deleteMessage', function(data) {
+		name = retrieveName(socket.id);
+		data = JSON.parse(data);
+		// DB request : find all messages sent to the user, order by date DESC
+		Chat.findOneAndRemove({
+			_id: data._id
+		}, function(err, deld) {
+			console.log(deld);
+			// send error to the client
+			if (err) {
+				socket.emit('deleteMessage', {
+					"success": false,
+					"error": err
+				});
+			} else if (!deld) {
+				socket.emit('deleteMessage', {
+					"success": false,
+					"error": "no message to delete"
+				});
+			} else {
+
+				socket.emit('deleteMessage', {
+					"success": true,
+					"_id": data._id
 				});
 			}
 		});

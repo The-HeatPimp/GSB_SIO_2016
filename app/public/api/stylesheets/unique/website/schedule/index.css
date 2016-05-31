@@ -1,0 +1,120 @@
+.modalInfo span {
+    padding: 2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+
+    font-weight: bold;
+    line-height: 7px;
+}
+
+.add-on {
+    z-index: 100000;
+
+    display: inline-block;
+}
+
+.modalInfo {
+    margin-top: 10px;
+}
+
+.Stitle {
+    font-size: 30px;
+}
+
+.Slocation {
+    font-size: 10px;
+    font-weight: 100;
+
+    color: grey;
+}
+
+.Sdescription {
+    font-size: 15px;
+    font-weight: 100;
+}
+
+.Screator {
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.Sparticipant {
+    font-size: 10px;
+    font-weight: normal;
+}
+
+.Sinfo {
+    font-size: 15px;
+    font-weight: 900;
+
+    color: black;
+}
+
+#calendar {
+    margin-top: 60px;
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+#openCModal {
+    padding: 10px;
+    margin: 40px;
+}
+
+
+
+.selectBox {
+    position: relative;
+}
+
+.selectBox select {
+    width: 100%;
+
+    font-weight: bold;
+}
+.selectBox2 {
+    position: relative;
+}
+
+.selectBox2 select {
+    width: 100%;
+
+    font-weight: bold;
+}
+.overSelect {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    cursor: pointer;
+}
+
+#checkboxes {
+    display: none;
+
+    border: 1px #dadada solid;
+}
+
+#checkboxes label {
+    display: block;
+}
+
+#checkboxes label:hover {
+    background-color: #1e90ff;
+}
+
+#checkboxes2 {
+    display: none;
+
+    border: 1px #dadada solid;
+}
+
+#checkboxes2 label {
+    display: block;
+}
+
+#checkboxes2 label:hover {
+    background-color: #1e90ff;
+}

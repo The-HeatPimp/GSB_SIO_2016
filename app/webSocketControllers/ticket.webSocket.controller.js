@@ -20,7 +20,8 @@ module.exports = function(socket) {
 	// Method : createTicket :
 	// Save a ticket to the database
 	socket.on('createTicket', function(data) {
-		name = retrieveName(socket.id);
+		console.log("creating ticket");
+		name = retrieveName(socket.id);	
 		var isValid = true;
 		data = JSON.parse(data);
 		var savedTicket = {};
@@ -76,7 +77,41 @@ module.exports = function(socket) {
 
 	// Method : ListTicketUser :
 	// List all the ticket created by the user
-	socket.on('listTicketUser', function(data) {
+	socket.on('listTicketUser', function() {
+		name = retrieveName(socket.id);
+		// DB request : find all the ticket created by the user
+		Ticket.find({
+			"creator": name
+		}, function(err, ticket) {
+
+			// send the error to the client
+			if (err) {
+				console.log('err');
+				socket.emit('listTicketUser', {
+					"success": false,
+					"error": err
+				});
+			} else if (ticket.length < 1) {
+				console.log('none');
+				socket.emit('listTicketUser', {
+					"success": false,
+					"error": "no ticket found in database"
+				});
+			} else {
+				console.log('success');
+				// send the response to the user
+				socket.emit('listTicketUser', {
+					"success": true,
+					"ticket": ticket
+				});
+			}
+		});
+	});
+
+
+	// Method : ListTicketID :
+	// List all the ticket ID created by the user
+	socket.on('listTicketID', function() {
 		name = retrieveName(socket.id);
 		// DB request : find all the ticket created by the user
 		Ticket.find({
@@ -84,12 +119,12 @@ module.exports = function(socket) {
 		}, function(err, ticket) {
 			// send the error to the client
 			if (err)
-				socket.emit('listTicketUser', {
+				socket.emit('listTicketID', {
 					"success": false,
 					"error": err
 				});
 			else if (!ticket)
-				socket.emit('listTicketUser', {
+				socket.emit('listTicketID', {
 					"success": false,
 					"error": "no ticket found in database"
 				});
@@ -98,16 +133,11 @@ module.exports = function(socket) {
 				sentTicket = [];
 				for (var i = 0; i < ticket.length; i++) {
 					sentTicket[i] = {
-						id: ticket[i].id,
-						title: ticket[i].title,
-						typeRequest: ticket[i].typeRequest,
-						importance: ticket[i].importance,
-						created_at: ticket[i].created_at,
-						closed: ticket[i].closed
+						_id: ticket[i]._id,
 					};
 				}
 				// send the response to the user
-				socket.emit('listTicketUser', {
+				socket.emit('listTicketID', {
 					"success": true,
 					"ticket": sentTicket
 				});
@@ -148,8 +178,7 @@ module.exports = function(socket) {
 							title: ticket[i].title,
 							message: ticket[i].message[ticket[i].message.length - 1]
 						};
-					} else
-						++data.nb;
+					} else ++data.nb;
 				}
 				// send the response to the client
 				socket.emit('requestLastTicket', {
@@ -168,7 +197,7 @@ module.exports = function(socket) {
 		if (AdminHandler.accessLevel(name) > 1) {
 			// DB request : find all the tickets that aren't closed
 			Ticket.find({
-				"closed": false
+				
 			}, function(err, ticket) {
 				// send the error to the client
 				if (err)
@@ -183,20 +212,10 @@ module.exports = function(socket) {
 					});
 				else {
 					// format the response
-					sentTicket = [];
-					for (var i = 0; i < ticket.length; i++) {
-						sentTicket[i] = {
-							id: ticket[i].id,
-							title: ticket[i].title,
-							typeRequest: ticket[i].typeRequest,
-							importance: ticket[i].importance,
-							created_at: ticket[i].created_at,
-						};
-					}
 					// send the response to the client
 					socket.emit('listTicketAdmin', {
 						"success": true,
-						"ticket": sentTicket
+						"ticket": ticket
 					});
 				}
 			});
@@ -214,7 +233,7 @@ module.exports = function(socket) {
 		data = JSON.parse(data);
 		// DB request : find a ticket matching the given ID
 		Ticket.findOne({
-				_id: data.id
+				_id: data._id
 			},
 			function(err, ticket) {
 				// send the error to the client
@@ -247,7 +266,7 @@ module.exports = function(socket) {
 			data = JSON.parse(data);
 			// DB request : Find a ticket matching the given ID
 			Ticket.findOne({
-				_id: data.id
+				_id: data._id
 			}, function(err, ticket) {
 				// Send the error to the client
 				if (err)
@@ -272,7 +291,8 @@ module.exports = function(socket) {
 							});
 						} else {
 							socket.emit('closeTicket', {
-								"success": true
+								"success": true,
+								"_id": ticket._id
 							});
 						}
 					});
@@ -294,7 +314,7 @@ module.exports = function(socket) {
 		data = JSON.parse(data);
 		// DB request : Find a ticket matching the given ID
 		Ticket.findOne({
-			_id: data.id
+			_id: data._id
 		}, function(err, ticket) {
 			// Send the response to the client
 			if (err)
@@ -324,8 +344,16 @@ module.exports = function(socket) {
 							"error": err
 						});
 					} else {
+						var index = ticket.message.length - 1;
+						ticket = {
+							parent: ticket._id,
+							sender: ticket.message[index].sender,
+							dateMessage: ticket.message[index].dateMessage,
+							text: ticket.message[index].text
+						};
 						socket.emit('answerToTicket', {
-							"success": true
+							"success": true,
+							"comment": ticket
 						});
 					}
 				});

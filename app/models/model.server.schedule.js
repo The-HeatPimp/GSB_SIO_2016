@@ -11,7 +11,7 @@ var ScheduleSchema = new Schema({
     username: String,
     participate: {
       type: Boolean,
-      default: false
+      default: true
     }
   }],
   date_start: Date,
@@ -19,7 +19,11 @@ var ScheduleSchema = new Schema({
   title: String,
   description: String,
   creator: String,
-  location: String
+  location: String,
+  idRoute: {
+    type: Schema.Types.ObjectId,
+    ref: 'Route'
+  }
 });
 
 // save the model
